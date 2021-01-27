@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../incs/malloc.h
+stdio.h
+-
+unistd.h
+-
+sys/mman.h
+-
+stdlib.h
+-
+
+/home/sxhondo/ft_malloc/srcs/ft_malloc.c
+malloc.h
+/home/sxhondo/ft_malloc/srcs/malloc.h
+

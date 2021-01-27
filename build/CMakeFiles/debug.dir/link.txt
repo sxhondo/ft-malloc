@@ -1,0 +1,1 @@
+/bin/clang-10 -g  -rdynamic CMakeFiles/debug.dir/main.c.o  -o debug 

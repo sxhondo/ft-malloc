@@ -1,0 +1,4 @@
+/home/sxhondo/ft_malloc/build/CMakeFiles/rebuild_cache.dir
+/home/sxhondo/ft_malloc/build/CMakeFiles/edit_cache.dir
+/home/sxhondo/ft_malloc/build/CMakeFiles/debug.dir
+/home/sxhondo/ft_malloc/build/CMakeFiles/ft_malloc.dir

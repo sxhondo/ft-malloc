@@ -1,0 +1,38 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    CMakeLists.txt                                     :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/03/02 16:27:31 by sxhondo           #+#    #+#              #
+#    Updated: 2020/03/02 16:27:33 by sxhondo          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+cmake_minimum_required(VERSION 2.8)
+
+project(ft_malloc)
+
+set(DEBUG_FLAGS "-g -Wall -Wextra")
+set(BUILD_FLAGS "-Wall -Wextra -Werror")
+
+set(SRC_DIR ${PROJECT_SOURCE_DIR}/srcs/)
+set(INC_DIR ${PROJECT_SOURCE_DIR}/incs/)
+
+include_directories(${PROJECT_SOURCE_DIR}/incs)
+
+# LIBRARY
+add_library(${PROJECT_NAME} SHARED
+	srcs/ft_malloc.c
+)
+
+# DEBUG MODE
+add_executable(debug 
+	srcs/ft_malloc.c
+	srcs/libft_utils.c)
+
+set_target_properties(debug PROPERTIES
+		COMPILE_FLAGS ${DEBUG_FLAGS}
+		COMPILE_DEFINITIONS DEBUG
+		RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
