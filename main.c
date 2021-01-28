@@ -8,15 +8,5 @@ int main()
     printf("sizeof of memblock: %ld\n", sizeof(t_memblock));
 
     malloc(4);
-    malloc(4);
-    malloc(4);
-    malloc(4);
-    malloc(4);
-    malloc(4);
-    malloc(4);
-    malloc(4);
-    malloc(4);
-    malloc(4);
-    malloc(4);
     return 0;
 }

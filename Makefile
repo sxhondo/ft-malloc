@@ -18,7 +18,7 @@ NAME = libft_malloc_$(HOSTTYPE).so
 LIBRARY = libft_malloc.so
 
 CC = gcc
-CC_FLAGS = -O0 -g -W -Wall -Wextra
+CC_FLAGS = -g # -Wall -Wextra -Werror
 FLAGS_LIB = -shared
 
 INC_DIR = inc
@@ -30,20 +30,20 @@ OBJECTS = $(SOURCES:%.c=$(OBJ_DIR)/%.o)
 
 all: $(NAME)
 	
-$(NAME): $(OBJECTS)
+$(NAME): $(OBJECTS) inc/malloc.h
 		$(CC) $(CC_FLAGS) $(FLAGS_LIB) -o $@ $(OBJECTS)
 		@rm -f $(LIBRARY)
 		ln -s $(NAME) $(LIBRARY)
 
-debug: main.c $(OBJECTS)
-	$(CC) $(CC_FLAGS) main.c -o $@ $(LIBRARY) -I $(INC_DIR)
+debug: clean $(OBJECTS) inc/malloc.h
+	$(CC) $(CC_FLAGS) $(OBJ_DIR)/*.o -o $@ -I $(INC_DIR)
 	
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CC_FLAGS) -c -o $@ $(CC_FLAGS) $^ -I $(INC_DIR)
 
 clean:
-	@rm -rf $(OBJ_DIR)
+	@rm -rf $(OBJ_DIR) debug
 
 fclean: clean
 	@rm -f $(NAME) $(LIBRARY)

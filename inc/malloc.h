@@ -8,7 +8,10 @@
 #include <stdlib.h>
 #include <sys/resource.h>
 
-# define OFFSET_HEADER(ptr) ((ptr + sizeof(t_memblock)))
+# define HEADER_SIZE (sizeof(t_mem_block))
+
+# define LEFT_OFFSET_HEADER(ptr) ((void *)((unsigned long)ptr + HEADER_SIZE))
+# define RIGHT_OFFSET_HEADER(ptr) ((void *)((unsigned long)ptr - HEADER_SIZE))
 
 # define TINY_ZONE_SIZE (2 * getpagesize())
 # define TINY_ZONE_BLOCK ((size_t)(TINY_ZONE_SIZE / 128))
@@ -21,15 +24,14 @@ typedef enum	e_boolean {
 	TRUE
 }				t_boolean;
 
-typedef struct			s_memblock
+typedef struct			s_mem_block
 {
+	unsigned int 		is_free;
 	size_t          	size;
-	struct s_memblock 	*next;
-	struct s_memblock 	*prev;
-}                   	t_memblock;
+	struct s_mem_block 	*next;
+}                   	t_mem_block;
 
 void 	*ft_memcpy(void *dst, void *src, size_t n);
 void	*ft_memset(void *b, int c, size_t len);
-void 	*malloc(size_t requested_size);
 
 #endif
