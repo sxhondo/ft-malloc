@@ -1,1 +1,0 @@
-/usr/bin/cc   -rdynamic CMakeFiles/debug.dir/srcs/ft_malloc.c.o CMakeFiles/debug.dir/srcs/libft_utils.c.o  -o ../debug 

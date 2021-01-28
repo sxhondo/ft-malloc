@@ -27,6 +27,8 @@ add_library(${PROJECT_NAME} SHARED
 	srcs/ft_malloc.c
 )
 
+
+
 # DEBUG MODE
 add_executable(debug 
 	srcs/ft_malloc.c

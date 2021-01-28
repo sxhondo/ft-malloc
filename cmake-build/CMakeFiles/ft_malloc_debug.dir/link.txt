@@ -1,2 +1,0 @@
-/usr/bin/ar qc libft_malloc_debug.a  CMakeFiles/ft_malloc_debug.dir/srcs/ft_malloc.c.o
-/usr/bin/ranlib libft_malloc_debug.a

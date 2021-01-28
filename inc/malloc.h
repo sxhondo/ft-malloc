@@ -1,6 +1,7 @@
-#ifndef FDF_H
-# define FDF_H
+#ifndef FT_MALLOC_H
+# define FT_MALLOC_H
 
+#include <assert.h>
 #include <stdio.h> //todo
 #include <unistd.h>
 #include <sys/mman.h>
@@ -27,7 +28,8 @@ typedef struct			s_memblock
 	struct s_memblock 	*prev;
 }                   	t_memblock;
 
-void *ft_memcpy(void *dst, void *src, size_t n);
+void 	*ft_memcpy(void *dst, void *src, size_t n);
 void	*ft_memset(void *b, int c, size_t len);
+void 	*malloc(size_t requested_size);
 
 #endif

@@ -10,31 +10,44 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = ft_malloc
+ifeq ($(HOSTTYPE),)
+	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
+endif
 
-CMAKE_DIR = ./cmake-build/
+NAME = libft_malloc_$(HOSTTYPE).so
+LIBRARY = libft_malloc.so
+
+CC = gcc
+CC_FLAGS = -O0 -g -W -Wall -Wextra
+FLAGS_LIB = -shared
+
+INC_DIR = inc
+SRC_DIR = src
+OBJ_DIR = obj
+
+SOURCES = malloc.c libft_utils.c
+OBJECTS = $(SOURCES:%.c=$(OBJ_DIR)/%.o)
 
 all: $(NAME)
 	
-$(NAME): $(CMAKE_DIR) $(CMAKE_DIR)Makefile
-		$(MAKE) -C $(CMAKE_DIR) $(NAME)
+$(NAME): $(OBJECTS)
+		$(CC) $(CC_FLAGS) $(FLAGS_LIB) -o $@ $(OBJECTS)
+		@rm -f $(LIBRARY)
+		ln -s $(NAME) $(LIBRARY)
 
-debug: $(CMAKE_DIR) $(CMAKE_DIR)Makefile
-		$(MAKE) -C $(CMAKE_DIR) debug --no-print-directory
-
-$(CMAKE_DIR):
-	mkdir -p $(CMAKE_DIR)
-
-$(CMAKE_DIR)Makefile:
-	cd $(CMAKE_DIR) && cmake ../
+debug: main.c $(OBJECTS)
+	$(CC) $(CC_FLAGS) main.c -o $@ $(LIBRARY) -I $(INC_DIR)
+	
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CC_FLAGS) -c -o $@ $(CC_FLAGS) $^ -I $(INC_DIR)
 
 clean:
-	rm -rf $(CMAKE_DIR)
+	@rm -rf $(OBJ_DIR)
 
 fclean: clean
-	rm -rf debug
-	rm -rf $(NAME)
+	@rm -f $(NAME) $(LIBRARY)
 
-re: fclean all
+re: fclean $(NAME)
 
-.PHONY: fdf build debug re fclean clean all
+.PHONY: all clean fclean re

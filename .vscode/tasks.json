@@ -10,20 +10,15 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "make debug && run",
-			"type": "shell",
-			"command": "make debug && ./debug",
-			"problemMatcher": [],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
-		},
-		{
 			"label": "make debug",
 			"type": "shell",
 			"command": "make debug",
 			"problemMatcher": []
+		},
+		{
+			"label": "exp",
+			"command": "sh ${workspaceFolder}/exporter.sh",
+			"type": "shell"
 		}
 	]
 }

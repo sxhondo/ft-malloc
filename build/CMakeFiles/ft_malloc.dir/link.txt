@@ -1,1 +1,0 @@
-/bin/clang-10 -fPIC -g  -shared -Wl,-soname,libft_malloc.so -o libft_malloc.so CMakeFiles/ft_malloc.dir/srcs/ft_malloc.c.o 
