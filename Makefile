@@ -25,7 +25,7 @@ INC_DIR = inc
 SRC_DIR = src
 OBJ_DIR = obj
 
-SOURCES = malloc.c libft_utils.c
+SOURCES = malloc.c libft_utils.c main.c
 OBJECTS = $(SOURCES:%.c=$(OBJ_DIR)/%.o)
 
 all: $(NAME)
