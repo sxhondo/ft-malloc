@@ -1,27 +1,49 @@
 #include "malloc.h"
 
-static t_mem_block *g_head = NULL;
+t_mem_block *g_head;
 
-size_t  get_allocation_size(size_t size)
+size_t get_allocation_size(size_t requested_size)
 {
-    if (size <= TINY_ZONE_BLOCK)
+    if (requested_size <= TINY_ZONE_BLOCK)
         return TINY_ZONE_SIZE;
-    else if (size >= SMALL_ZONE_BLOCK)
+    else if (requested_size <= SMALL_ZONE_BLOCK)
         return SMALL_ZONE_SIZE;
     else
-        return size + HEADER_SIZE;
+        return requested_size + HEADER_SIZE;
 }
 
-void add_block_on_top(t_mem_block *nb)
+t_zone_type get_zone_type(size_t allocation_size)
 {
-    // printf("size: %ld\n", nb->size);
-    if (!g_head)
+    if (allocation_size == TINY_ZONE_SIZE)
+        return TINY;
+    else if (allocation_size == SMALL_ZONE_SIZE)
+        return SMALL;
+    else
+        return LARGE;
+}
+
+void add_block_to_list(t_mem_block *nb)
+{
+    nb->prev = NULL;
+    nb->next = NULL;
+
+    if (!g_head || (unsigned long)g_head > (unsigned long)nb)
+    {
+        if (g_head)
+            g_head->prev = nb;
+        nb->next = g_head;
         g_head = nb;
+    }
     else
     {
-        nb->next = g_head;
-        g_head->prev = nb;
-        g_head = nb;
+        t_mem_block *curr = g_head;
+        while (curr->next && (unsigned long)curr->next < (unsigned long)nb)
+            curr = curr->next;
+        nb->next = curr->next;
+        curr->next = nb;
+        nb->prev = curr;
+        if (nb->next)
+            nb->next->prev = nb;
     }
 }
 
@@ -39,46 +61,21 @@ void remove_block_from_list(t_mem_block *rb)
         rb->next->prev = rb->prev;
 }
 
-void show_alloc_mem()
-{
-    t_mem_block *curr = g_head;
-
-    puts("===\n");
-    if (!g_head)
-    {
-        puts("no allocated memory\n");
-        return ;
-    }
-    while (curr)
-    {
-        puts("[%10p] - [%10p], len: %ld\n"); 
-        // curr, curr + curr->size, curr->size);
-        curr = curr->next;
-    }
-    puts("===\n");
-}
-
 void *realloc(void *ptr, size_t size)
 {
     write(0, "realloc ", 8);
     return NULL;
 }
 
-t_mem_block *split_blocks(t_mem_block *memory, size_t requested_size)
-{
-    t_mem_block *free_space = LEFT_OFFSET_HEADER(memory) + requested_size;
-    free_space->size = memory->size - (requested_size + HEADER_SIZE);
-    memory->size = requested_size;
-    return free_space;
-}
-
 void free(void *ptr)
 {
-    // write(0, "free ", 5);
+    if (!ptr)
+        return ;
     t_mem_block *offseted_right = RIGHT_OFFSET_HEADER(ptr);
-    add_block_on_top(offseted_right);
+    add_block_to_list(offseted_right);
+    // add_block_on_top(offseted_right);
+    // add_block_on_back(offseted_right);
 
-    // merge
     t_mem_block *curr = g_head;
     while (curr->next)
     {
@@ -98,47 +95,69 @@ void free(void *ptr)
         curr = curr->next;
     }
 
-    if (curr->next == NULL && curr->prev != NULL && curr->size >= DEALLOC_SIZE)
+    // ft_itoa(curr->size, 10, 0);
+    // ft_putstr("\n");
+    // ft_itoa(HEADER_SIZE, 10, 0);
+    // ft_putstr("\n");
+    // ft_itoa(M_MMAP_THRESHOLD, 10, 0);
+    // if (curr->next == NULL &&
+    //     (curr->size + HEADER_SIZE) >= M_MMAP_THRESHOLD)
+    // {
+    //     ft_putstr("munmapping ");
+    //     ft_itoa(curr->size, 16, 0);
+    //     ft_putstr(" bytes\n");
+    //     remove_block_from_list(curr);
+    //     munmap(curr, curr->size);   
+    // }
+}
+
+void partitioning(t_mem_block *raw, size_t requested_size, size_t allocation_size)
+{
+    // if (allocation_size > requested_size + HEADER_SIZE)
+
+    if (allocation_size > requested_size + HEADER_SIZE)
     {
-        printf("Free!");
-        remove_block_from_list(curr);
-        munmap(curr, curr->size);   
+        t_mem_block *free_space = LEFT_OFFSET_HEADER(raw) + requested_size;
+        free_space->size = raw->size - (requested_size + HEADER_SIZE);
+        free_space->zone_type = raw->zone_type;
+        free_space->is_free = TRUE;
+        add_block_to_list(free_space);
     }
+    raw->is_free = FALSE;
+    raw->size = requested_size;
+    add_block_to_list(raw);
 }
 
 void *malloc(size_t requested_size)
 {
-    // write(0, "HELLO MALLOC\n ", 13);
-    t_mem_block *memory, *nb, *iterator;
     size_t      allocation_size = get_allocation_size(requested_size);
+    t_zone_type zone_type = get_zone_type(allocation_size);
 
-    iterator = g_head;
-    while (iterator)
+    t_mem_block *raw, *curr = g_head;
+    while (curr)
     {
-        if (iterator->size > requested_size + HEADER_SIZE)
+        if (curr->is_free == TRUE && 
+                curr->zone_type == zone_type &&
+                    curr->size > requested_size + HEADER_SIZE)
         {
-            void *offseted_left = LEFT_OFFSET_HEADER(iterator);
-            remove_block_from_list(iterator);
-            if (iterator->size == requested_size)
-                return offseted_left;
-            nb = split_blocks(iterator, requested_size);
-            add_block_on_top(nb);
-            return offseted_left;
+            raw = curr;
+            void *memptr = LEFT_OFFSET_HEADER(raw);
+            remove_block_from_list(raw);
+            if (raw->size == requested_size)
+                return memptr;
+            partitioning(raw, requested_size, allocation_size);
+            return memptr;
         } else {
-            iterator = iterator->next;
+            curr = curr->next;
         }
     }
     
-    memory = mmap(NULL, allocation_size, 
+    raw = mmap(NULL, allocation_size, 
         PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
 
-    if (memory == MAP_FAILED) return NULL;
-    
-    memory->size = allocation_size - HEADER_SIZE;
-    if (allocation_size > requested_size + HEADER_SIZE)
-    {
-        nb = split_blocks(memory, requested_size);
-        add_block_on_top(nb);
-    }
-    return LEFT_OFFSET_HEADER(memory);
+    if (raw == MAP_FAILED) return NULL;
+    raw->size = allocation_size - HEADER_SIZE;
+    raw->zone_type = zone_type;
+    partitioning(raw, requested_size, allocation_size);
+    return LEFT_OFFSET_HEADER(raw);
 }

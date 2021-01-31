@@ -9,5 +9,7 @@ else
 	export DYLD_INSERT_LIBRARIES=$PWD/libft_malloc.so
 	export DYLD_FORCE_FLAT_NAMESPACE=1
 fi
-# set environment LD_PRELOAD=./libft_malloc.so
 $@
+
+
+# set environment LD_PRELOAD=./libft_malloc.so

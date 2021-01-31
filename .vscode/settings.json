@@ -5,6 +5,7 @@
         "initializer_list": "c",
         "utility": "c",
         "malloc.h": "c",
-        "*.tcc": "c"
+        "*.tcc": "c",
+        "stdlib.h": "c"
     }
 }
