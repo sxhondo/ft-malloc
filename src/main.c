@@ -3,43 +3,32 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern t_mem_block *g_head;
+extern t_mem_chunk *g_head;
 
-// void test_malloc_1()
-// {
-// 	void *p, *c, *t;
+void test_malloc_1()
+{
+	void *p, *c, *t;
 
-// 	for (int i = 0; i < 13; i++)
-// 	{
-// 		char *ch = malloc(1200);
-// 		free(ch);
-// 	}
-// 	// char *ch = malloc(63);
-// 	// char *th = malloc(8000);
-// 	// p = malloc(4096 * 2);
-// 	// c = malloc(4096 * 4);
-// }
+
+}
 
 void test_malloc_2()
-{
-	void	*t	= malloc(1);
-    void	*t0	= malloc(TINY_ZONE_BLOCK);
-	void	*ab	= malloc(TINY_ZONE_BLOCK + 1);
-	// ab	= malloc(TINY_ZONE_BLOCK + 1);
-	// ab	= malloc(TINY_ZONE_BLOCK + 4000);
-    // void	*t00 = malloc(TINY_ZONE_BLOCK);
-    // void	*t000 = malloc(TINY_ZONE_BLOCK);
-    // void	*t1	= malloc(SMALL_ZONE_BLOCK);
-    // void	*t2	= malloc(SMALL_ZONE_BLOCK + 1);
+{   
+    void	*t0	= malloc(SMALL_ZONE_CHUNK + 1);
+    void	*t1	= malloc(SMALL_ZONE_CHUNK + 1);
+    void	*t00 = malloc(SMALL_ZONE_CHUNK);
+    void	*t000 = malloc(TINY_ZONE_CHUNK);
+    void	*t0000 = malloc(TINY_ZONE_CHUNK);
 
     // Should print mallocs in all categories (TINY, SMALL, LARGE)
+    // free(t1);
+    // free(t00);
+    // free(t000);
+    // free(t0000);
+    show_alloc_mem();
+    // t0 = _malloc(TINY_ZONE_CHUNK - sizeof(t_mem_chunk));
     // show_alloc_mem();
-    // show_alloc_mem_hex();
-    // show_heap_list();
-    // free(t0);
 
-    // t0 = malloc(TINY_ZONE_BLOCK - sizeof(t_mem_block));
-    // // show_alloc_mem();
     // free(t0);
     // free(t00);
     // free(t000);
@@ -47,20 +36,68 @@ void test_malloc_2()
     // free(t2);
 }
 
+void test_malloc_3()
+{
+    void	*t0	= malloc(TINY_ZONE_CHUNK);
+    void	*t00 = malloc(TINY_ZONE_CHUNK);
+    void	*t000 = malloc(TINY_ZONE_CHUNK);
+    void	*t0000 = malloc(TINY_ZONE_CHUNK);
+    void	*t00000 = malloc(TINY_ZONE_CHUNK);
+
+    void	*t1	= malloc(SMALL_ZONE_CHUNK);
+    void	*t11 = malloc(SMALL_ZONE_CHUNK);
+    void	*t111 = malloc(SMALL_ZONE_CHUNK);
+    void	*t1111 = malloc(SMALL_ZONE_CHUNK);
+    void	*t11111 = malloc(SMALL_ZONE_CHUNK);
+
+    free(t0);
+    free(t00);
+    free(t000);
+    free(t0000);
+    free(t00000);
+
+    free(t1);
+    free(t11);
+    free(t111);
+    free(t1111);
+    free(t11111);
+
+    show_alloc_mem();
+}
+
+void test_malloc_4()
+{
+    void *p = malloc(5);
+
+    ft_memcpy(p, "hello", 5);
+    show_alloc_mem();
+
+    printf("===\n");
+
+    void *new = realloc(p, 7);
+    show_alloc_mem();
+
+    printf("\n%s, %d\n", new, ft_strlen(new));
+}
+
+void test_malloc_5()
+{
+    void *p = malloc(SMALL_ZONE_CHUNK + 1);
+
+    free(p);
+
+    show_alloc_mem();
+}
+
 int main()
 {
-	// mtrace();
-    // printf("\nmemory page size: %d\n", getpagesize());
-    // printf("tiny zone size: %d\n", TINY_ZONE_SIZE);
-	// printf("tiny zone block: %ld\n", TINY_ZONE_BLOCK);
-    // printf("small zone size: %d\n", SMALL_ZONE_SIZE);
-	// printf("small zone block: %ld\n", SMALL_ZONE_BLOCK);
-    // printf("header size: %ld\n", HEADER_SIZE);
+    printf("header size: %ld\n", HEADER_SIZE);
 
-	// test_malloc_1();
+
+    // test_malloc_1();
 	test_malloc_2();
-	show_alloc_mem();
+    // test_malloc_3();
+    // test_malloc_4();
+    // test_malloc_5();
 
-	// malloc(1);
-	return (0);
 }

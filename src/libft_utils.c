@@ -1,5 +1,14 @@
 #include "malloc.h"
 
+int 	ft_strlen(char *src)
+{
+	int i = 0;
+
+	while (src[i] != '\0')
+		i++;
+	return i;
+}
+
 void	*ft_memcpy(void *dst, void *src, size_t n)
 {
 	size_t	i;

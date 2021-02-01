@@ -1,10 +1,16 @@
 #include "malloc.h"
 
-extern t_mem_block *g_head;
+extern t_mem_chunk *g_head;
 
 void    show_alloc_mem()
 {
-    t_mem_block *curr = g_head;
+    t_mem_chunk *curr = g_head;
+
+    if (!curr)
+    {
+        ft_putstr("g_head is null\n");
+        return ;
+    }
 
     while (curr)
     {
@@ -23,4 +29,5 @@ void    show_alloc_mem()
         ft_putstr("\n");
         curr = curr->next;
     }
+    ft_putstr("===\n");
 }

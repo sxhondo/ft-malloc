@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <sys/resource.h>
 
-# define HEADER_SIZE (sizeof(t_mem_block))
+# define HEADER_SIZE (sizeof(t_mem_chunk))
 
 # define LEFT_OFFSET_HEADER(ptr) ((void *)((unsigned long)ptr + HEADER_SIZE))
 # define RIGHT_OFFSET_HEADER(ptr) ((void *)((unsigned long)ptr - HEADER_SIZE))
@@ -16,7 +16,7 @@
 /**
  M_MMAP_THRESHOLD
  * Allocating memory using mmap(2) has the significant advantage
- * that the allocated memory blocks can always be independently
+ * that the allocated memory chunk can always be independently
  * released back to the system.  (By contrast, the heap can be
  * trimmed only if memory is freed at the top end.)  On the other
  * hand, there are some disadvantages to the use of mmap(2):
@@ -30,10 +30,10 @@
 # define M_MMAP_THRESHOLD (128 * 1024)
 
 # define TINY_ZONE_SIZE (2 * getpagesize())
-# define TINY_ZONE_BLOCK ((size_t)(TINY_ZONE_SIZE / 128))
+# define TINY_ZONE_CHUNK ((size_t)(TINY_ZONE_SIZE / 128))
 
 # define SMALL_ZONE_SIZE (4 * getpagesize())
-# define SMALL_ZONE_BLOCK ((size_t)(SMALL_ZONE_SIZE / 128))
+# define SMALL_ZONE_CHUNK ((size_t)(SMALL_ZONE_SIZE / 128))
 
 typedef enum 			e_boolean
 {
@@ -48,23 +48,33 @@ typedef enum 			e_zone_type
 	LARGE
 }						t_zone_type;
 
-typedef struct			s_mem_block
+typedef struct			s_mem_chunk
 {
 	size_t          	size;
 	t_boolean			is_free;
 	t_zone_type			zone_type;
-	struct s_mem_block 	*next;
-	struct s_mem_block 	*prev;
-}                   	t_mem_block;
+	struct s_mem_chunk 	*next;
+	struct s_mem_chunk 	*prev;
+}                   	t_mem_chunk;
 
+int 	ft_strlen(char *src);
 void 	*ft_memcpy(void *dst, void *src, size_t n);
 void	*ft_memset(void *b, int c, size_t len);
 void	ft_putstr(char const *s);
 void	ft_itoa(size_t nb, char base, int fd);
 
-void 	free(void *ptr);
-void 	*malloc(size_t requested_size);
+void 	add_block_to_list(t_mem_chunk *nb);
+void 	remove_block_from_list(t_mem_chunk *rb);
+
 void    show_alloc_mem();
 
+
+// void 	*_realloc(void *ptr, size_t size);
+// void 	_free(void *ptr);
+// void 	*_malloc(size_t requested_size);
+
+void 	*realloc(void *ptr, size_t size);
+void 	free(void *ptr);
+void 	*malloc(size_t requested_size);
 
 #endif

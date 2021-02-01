@@ -12,4 +12,5 @@ fi
 $@
 
 
-# set environment LD_PRELOAD=./libft_malloc.so
+# gdb: set environment LD_PRELOAD=./libft_malloc.so
+# lldb: process launch -environment LD_PRELOAD=./libft_malloc.so
