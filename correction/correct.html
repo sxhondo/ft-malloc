@@ -389,9 +389,9 @@ No
 <section class="scale-section-item dancer from-down" id="section-304">
 <h3 class="main-title">Tests de fonctionnalité</h3>
 <p>
-Commencez par vous faire un script de lancement qui ne modifie les
-variables d'environnement que le temps de lancer un programme de test.
-Il devra s'appeler run.sh, et être exécutable:
+  Start by making yourself a launch script that doesn't modify the
+  environment variables that time to launch a test program.
+  It will have to be called run.sh, and be executable:
 
 $&gt; cat run.sh
 #!/bin/sh
@@ -402,8 +402,7 @@ $@
 </p>
 <h4 class="scale-question-name">Test de malloc</h4>
 <p class="scale-section-guidelines">
-Nous allons faire un premier programme de test qui ne fait pas de malloc, afin d'avoir une base de comparaison:
-<br>
+We will make a first test program that does not do malloc, in order to have a basis for comparison:<br>
 <br>$&gt; cat test0.c
 <br>#include <stdlib.h>
 <br>
@@ -438,12 +437,12 @@ Nous allons faire un premier programme de test qui ne fait pas de malloc, afin d
 <br>           1 involuntary context switches
 <br>$&gt;
 <br>
-<br>Nous allons ensuite ajouter un malloc, et écrire dans chaque
-allocation pour s'assurer que la page mémoire est bien allouée en
-mémoire physique par le MMU.
-<br>Le système n'alloue vraiment la mémoire d'une page que lorsqu'on
-écrit de dedans, donc même en faisant un mmap plus grand que la demande
-de malloc, cela ne modifie pas "page reclaims".
+<br > we will then add a malloc, and write in each
+allocation to ensure that the memory page is properly allocated in
+physical memory by the MMU.
+<br > the system only really allocates the memory of a page when
+written from within, so even making a mmap larger than the request
+from malloc, this does not change "page reclaims".
 <br>
 <br>$&gt; cat test1.c
 <br>#include <stdlib.h>
@@ -481,12 +480,12 @@ de malloc, cela ne modifie pas "page reclaims".
 <br>           1 involuntary context switches
 <br>$&gt;
 <br>
-<br>Notre programme test1 a demandé 1024 fois 1024 octets, donc 1Mbyte.
-<br>On peut le constater en faisant la différence avec le programme test0 :
-<br>- soit entre les lignes "maximum resident set size", on obtient un peu plus d'1Mbyte
-<br>- soit entre les lignes page reclaims qu'on multipliera par la valeur de getpagesize(3)
-<br>
-<br>Testons maintenant les deux programmes avec notre librairie:
+< br > our test1 Program requested 1024 times 1024 bytes, so 1Mbyte.
+<br > it can be seen by making the difference with the test0 program :
+<br > - between the lines "maximum resident set size" we get a little more than 1mbyte
+<br > - either between Page retrieval lines multiplied by the value of getpagesize (3)
+<br / >
+< br > now let's test both programs with our library:
 <br>
 <br>$&gt;./run.sh /usr/bin/time -l ./test0
 <br>     0.01 real 0.00 user 0.00 sys
@@ -522,16 +521,16 @@ de malloc, cela ne modifie pas "page reclaims".
 <br>     2 involuntary context switches
 <br>$&gt;
 <br>
-<br>On constate dans cet exemple que ce malloc a utilisé 1024 pages soit 4MBytes pour stocker 1Mbyte.
-<br>
-<br>Comptez le nombre de page utilisées et ajustez la note comme suit:
-<br>- moins de 255 pages, la mémoire réservée est insuffisante: 0
-<br>- 1023 pages et plus, le malloc fonctionne mais consomme une page minimum à chaque allocation: 1
-<br>- entre 513 pages et 1022 pages, le malloc fonctionne mais l'overhead est trop important: 2
-<br>- entre 313 pages et 512 pages, le malloc fonctionne mais l'overhead est très important: 3
-<br>- entre 273 pages et 312 pages, le malloc fonctionne mais l'overhead est important: 4
-<br>- entre 255 et 272 pages, le malloc fonctionne et l'overhead est raisonnable: 5
-<br>
+<br > we see in this example that this malloc used 1024 pages or 4mbytes to store 1mbyte.
+<br / >
+<br / > count the number of pages used and adjust the note as suit:
+<br > - less than 255 pages, insufficient est reserved memory: 0
+< br > - 1023 pages and more, the malloc works but consumes a minimum page on each allocation: 1
+<br > - between 513 pages and 1022 pages, the malloc works but the overhead est too important: 2
+<br > - between 313 pages and 512 pages, the malloc works but the overhead est very important: 3
+<br > - between 273 pages and 312 pages, the malloc works but the overhead is important: 4
+<br > - between 255 and 272 pages, the malloc works and the overhead est unit: 5
+<br / >
 </stdlib.h></stdlib.h></p>
 <div class="scale-question-answers">
 <div class="form-group hidden scale_team_answer_id"><div class="col-sm-10"><input class="form-control hidden" name="[scale_team][answers_attributes][3][id]" id="scale_team_answer_id" type="hidden"></div></div>
@@ -541,12 +540,12 @@ de malloc, cela ne modifie pas "page reclaims".
 </div>
 <h4 class="scale-question-name">Les zones pré-allouées</h4>
 <p class="scale-section-guidelines">
-Vérifiez dans le code source que les zones pré-allouées en fonctions des
- différentes tailles de malloc permettent d'y stocker au moins 100 fois
-la taille max pour ce type de zone.
-<br>Vérifiez également que la taille des zones est un multiple de getpagesize().
-<br>
-<br>Si un de ces points fait défaut, laissez Non.
+  Check in the source code that the pre-allocated areas in function of
+  different sizes of malloc allow to store at least 100 times
+  the max size for this type of area.
+  < br>Also check that the size of the zones is a multiple of getpagesize ().
+  <br>
+  <br > if one of these points is missing, leave no.
 <br>
 </p>
 <div class="scale-question-answers">
@@ -567,8 +566,7 @@ No
 </div>
 <h4 class="scale-question-name">Tests de free</h4>
 <p class="scale-section-guidelines">
-Nous allons rajouter simplement un free à notre programme de test:
-<br>
+  We will simply add a free to our test program:<br>
 <br>$&gt; cat test2.c
 <br>#include <stdlib.h>
 <br>
@@ -589,13 +587,13 @@ Nous allons rajouter simplement un free à notre programme de test:
 <br>}
 <br>$&gt; gcc -o test2 test2.c
 <br>
-<br>Nous allons comparer le nombre de "page reclaims" à celui de test0
-et test1. S'il y a autant de "page reclaims" ou plus que test1, le free
-ne marche pas.
+<br > we will compare the number of "Page reclaims" to that of test0
+and test1. If there are as many "page reclaims" or more than test1, the free
+don't work.
 <br>
 <br>$&gt;./run.sh /usr/bin/time -l ./test2
 <br>
-<br>Le free fonctionne-t-il ? (moins de "pages reclaims" que test1)
+<br>Does the free work ? (fewer "pages reclaim" than test1)
 <br>
 </stdlib.h></p>
 <div class="scale-question-answers">
@@ -616,7 +614,7 @@ No
 </div>
 <h4 class="scale-question-name">Qualité du free</h4>
 <p class="scale-section-guidelines">
-test2 a maximum 3 "page reclaims" en plus que test0 ?
+  test2 has maximum 3 "page reclaims" more than test0 ?
 <br>
 </p>
 <div class="scale-question-answers">
@@ -667,7 +665,7 @@ $&gt; cat test3.c
 <br>Bonjours
 <br>$&gt;
 <br>
-<br>Ca fonctionne comme dans l'exemple ?
+<br>does it work as in the example ?
 <br>
 </stdlib.h></strings.h></p>
 <div class="scale-question-answers">
@@ -688,8 +686,7 @@ No
 </div>
 <h4 class="scale-question-name">Test de realloc ++</h4>
 <p class="scale-section-guidelines">
-Dans test3.c, modifiez le corps de la fonction main de la manière suivante:
-<br>
+  In test3.c, change the main function body as follows:<br>
 <br>int     main()
 <br>{
 <br>   char *addr1;
@@ -727,7 +724,7 @@ No
 </div>
 <h4 class="scale-question-name">Gestions des erreurs</h4>
 <p class="scale-section-guidelines">
-Testez les cas particuliers et d'erreurs.
+  Test special cases and errors.
 <br>
 <br>$&gt; cat test4.c
 <br>#include <unistd.h>
@@ -753,9 +750,9 @@ Testez les cas particuliers et d'erreurs.
 <br>$&gt; ./run/sh ./test4
 <br>Bonjours
 <br>
-<br>En cas d'erreur, realloc doit renvoyer NULL. Est-ce que le "Bonjours" est affiché comme dans l'exemple ?
-<br>Si le programme réagit de façon malsaine (segfault ou autres), la
-soutenance s'arrête et vous devez sélectionner Crash en haut du barême.
+< br>In case of error, realloc should return NULL. Is the "Hello" displayed as in the example ?
+<br>if the program reacts in an unhealthy way (segfault or others), the
+defense stops and you have to select Crash at the top of the scale.
 <br>
 </stdlib.h></string.h></unistd.h></p>
 <div class="scale-question-answers">
@@ -792,8 +789,7 @@ $&gt; cat test5.c
 <br>$&gt; gcc -o test5 test5.c -L. -lft_malloc
 <br>$&gt; ./test5
 <br>
-<br>L'affichage correspond au sujet et à la répartition TINY/SMALL/LARGE du projet ?
-<br>
+< br>the display corresponds to the subject and the tiny/SMALL/LARGE distribution of the project ?<br>
 </stdlib.h></p>
 <div class="scale-question-answers">
 <div class="form-group hidden scale_team_answer_id"><div class="col-sm-10"><input class="form-control hidden" name="[scale_team][answers_attributes][10][id]" id="scale_team_answer_id" type="hidden"></div></div>
@@ -817,14 +813,14 @@ No
 <p></p>
 <h4 class="scale-question-name">Accès concurrentiels</h4>
 <p class="scale-section-guidelines">
-Le projet gère les accès concurrentiels des threads grâce à la bibliothèque pthread et aux mutexes.
-<br>
-<br>Comptez les cas applicables :
-<br>- un mutex empêche plusieurs threads d'entrer simultanément dans la fonction malloc
-<br>- un mutex empêche plusieurs threads d'entrer simultanément dans la fonction free
-<br>- un mutex empêche plusieurs threads d'entrer simultanément dans la fonction realloc
-<br>- un mutex empêche plusieurs threads d'entrer simultanément dans la fonction show_alloc_mem
-<br>
+  The project manages the competitive access of threads through the pthread library and mutexes.
+  <br>
+  < br>count the applicable cases :
+  < br>- a mutex prevents multiple threads from entering the malloc function simultaneously
+  < br>- a mutex prevents multiple threads from entering the free function simultaneously
+  < br>- a mutex prevents multiple threads from entering the realloc function simultaneously
+  < br>- a mutex prevents multiple threads from entering the show_alloc_mem function simultaneously
+  <br>
 </p>
 <div class="scale-question-answers">
 <div class="form-group hidden scale_team_answer_id"><div class="col-sm-10"><input class="form-control hidden" name="[scale_team][answers_attributes][11][id]" id="scale_team_answer_id" type="hidden"></div></div>
@@ -834,15 +830,15 @@ Le projet gère les accès concurrentiels des threads grâce à la bibliothèque
 </div>
 <h4 class="scale-question-name">Autres bonus</h4>
 <p class="scale-section-guidelines">
-S'il y a d'autres bonus, comptez-les ici. Les bonus doivent être 100%
-fonctionnels et un minimum utiles (à la discrétion du correcteur).
-<br>
-<br>Exemple de bonus:
-<br>- Lors d'un free, le projet "défragmente" la mémoire libre en regroupant les blocs libres concomitants en un seul
-<br>- Malloc possède des variables d'environnement de debug
-<br>- Une fonction permet de faire un dump hexa des zones allouées
-<br>- Une fonction permet d'afficher un historique des allocations mémoire effectuées
-<br>- ...
+  If there are other bonuses, count them here. Bonuses must be 100%
+  functional and a minimum useful (at the discretion of the corrector).
+  <br>
+  < br>bonus example:
+  <br > - during a free, the project "defragments" the free memory by grouping the concurrent free blocks into one
+  < Br > - Malloc has debug environment variables
+  <br > - a function allows to make a hexa dump of the allocated areas
+  <br > - a function to display a history of memory allocations made
+  <br> -...
 <br>
 </p>
 <div class="scale-question-answers">

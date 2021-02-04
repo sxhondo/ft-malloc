@@ -7,6 +7,7 @@
 #include <sys/mman.h>
 #include <stdlib.h>
 #include <sys/resource.h>
+#include <limits.h>
 
 # define HEADER_SIZE (sizeof(t_mem_chunk))
 
@@ -29,10 +30,10 @@
  **/
 # define M_MMAP_THRESHOLD (128 * 1024)
 
-# define TINY_ZONE_SIZE (2 * getpagesize())
+# define TINY_ZONE_SIZE (4 * getpagesize())
 # define TINY_ZONE_CHUNK ((size_t)(TINY_ZONE_SIZE / 128))
 
-# define SMALL_ZONE_SIZE (4 * getpagesize())
+# define SMALL_ZONE_SIZE (32 * getpagesize())
 # define SMALL_ZONE_CHUNK ((size_t)(SMALL_ZONE_SIZE / 128))
 
 typedef enum 			e_boolean
@@ -52,10 +53,11 @@ typedef struct			s_mem_chunk
 {
 	size_t          	size;
 	t_boolean			is_free;
-	t_zone_type			zone_type;
 	struct s_mem_chunk 	*next;
 	struct s_mem_chunk 	*prev;
 }                   	t_mem_chunk;
+
+t_mem_chunk				*arena[3];
 
 int 	ft_strlen(char *src);
 void 	*ft_memcpy(void *dst, void *src, size_t n);
@@ -63,8 +65,8 @@ void	*ft_memset(void *b, int c, size_t len);
 void	ft_putstr(char const *s);
 void	ft_itoa(size_t nb, char base, int fd);
 
-void 	add_block_to_list(t_mem_chunk *nb);
-void 	remove_block_from_list(t_mem_chunk *rb);
+void 	add_block_to_list(t_mem_chunk **dst, t_mem_chunk *src);
+void 	remove_block_from_list(t_mem_chunk **rb);
 
 void    show_alloc_mem();
 
