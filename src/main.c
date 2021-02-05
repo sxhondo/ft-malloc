@@ -36,9 +36,15 @@ int main()
     for (int i = 0; i < 1024; i++)
     {
         char *addr = malloc(1024);
+        char *a = realloc(addr, 1024 * 5);
         // show_alloc_mem();
         // free(addr);
     }
+
+    // char *addr = malloc(16);
+	// free((void *)addr + 5);
+
+
     show_alloc_mem();
     // test_malloc_limits();
     // show_alloc_mem();

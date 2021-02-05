@@ -18,29 +18,29 @@ NAME = libft_malloc_$(HOSTTYPE).so
 LIBRARY = libft_malloc.so
 
 CC = gcc
-CC_FLAGS = -g3 -fPIC
-FLAGS_LIB = -shared
+CC_FLAGS = -g3 # todo
 
-INC_DIR = inc
-SRC_DIR = src
-OBJ_DIR = obj
+INC_DIR = inc/
+SRC_DIR = src/
+OBJ_DIR = obj/
 
 SOURCES = malloc.c libft_utils.c print_utils.c list_utils.c main.c
-OBJECTS = $(SOURCES:%.c=$(OBJ_DIR)/%.o)
+OBJECTS = $(SOURCES:%.c=$(OBJ_DIR)%.o)
+HEADER = $(addprefix $(INC_DIR), malloc.h)
 
 all: $(NAME)
 	
-$(NAME): $(OBJECTS) inc/malloc.h
-		$(CC) $(CC_FLAGS) $(FLAGS_LIB) -o $@ $(OBJECTS)
-		@rm -f $(LIBRARY)
-		ln -s $(NAME) $(LIBRARY)
+$(NAME): $(OBJECTS) $(HEADER) Makefile
+	$(CC) -shared $(CC_FLAGS) -o $(NAME) $(OBJECTS) -I $(INC_DIR)
+	@rm -f $(LIBRARY)
+	ln -s $(NAME) $(LIBRARY)
 
-debug: all $(OBJECTS) inc/malloc.h
-	$(CC) $(CC_FLAGS) $(OBJ_DIR)/*.o -o $@ -I $(INC_DIR)
+debug: re $(OBJECTS) $(HEADER) Makefile
+	$(CC) $(CC_FLAGS) $(OBJ_DIR)*.o -o $@ -I $(INC_DIR)
 	
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	@mkdir -p $(@D)
-	$(CC) $(CC_FLAGS) -c -o $@ $(CC_FLAGS) $^ -I $(INC_DIR)
+	$(CC) $(CC_FLAGS) -fPIC -c -o $@ $(CC_FLAGS) $^ -I $(INC_DIR)
 
 clean:
 	@rm -rf $(OBJ_DIR) debug

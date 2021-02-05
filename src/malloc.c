@@ -20,8 +20,35 @@ t_zone_type get_zone_type(size_t alloc_size)
         return LARGE;
 }
 
+t_mem_chunk *select_chunk(t_mem_chunk *chunk)
+{
+    int i = 0;
+
+    while (i < 3)
+    {
+        t_mem_chunk *zone = arena[i];
+        while (zone)
+        {
+            if (zone == chunk)
+                return zone;
+            zone = zone->next;
+        }
+        i++;
+    }
+    return NULL;
+}
+
 void *realloc(void *ptr, size_t size)
 {
+    t_mem_chunk *chunk = select_chunk(RIGHT_OFFSET_HEADER(ptr));
+
+    if (chunk == NULL)
+        return NULL;
+
+    ft_putstr("realloc(");
+    ft_itoa(chunk->size, 10, 0);
+    ft_putstr(")\n");
+
     if (!ptr)
         return malloc(size);
     void *p = malloc(size);
@@ -31,49 +58,46 @@ void *realloc(void *ptr, size_t size)
     return p;
 }
 
-// int check_correct_chunk(t_mem_chunk *ch)
-// {
-//     t_mem_chunk *curr = g_head;
-
-//     while (curr)
-//     {
-//         if (ch == curr)
-//             return 1;
-//         curr = curr->next;
-//     }
-//     return 0;
-// }
-
 void free(void *ptr)
 {
     if (!ptr)
         return ;
 
-    t_mem_chunk *chunk = RIGHT_OFFSET_HEADER(ptr);
-    chunk->is_free = TRUE;
-    
-    size_t allocation_size = get_allocation_size(chunk->size);
-    t_zone_type zone_type = get_zone_type(allocation_size);
-    t_mem_chunk *curr = arena[zone_type];
+    t_mem_chunk *chunk = select_chunk(RIGHT_OFFSET_HEADER(ptr));
 
-    while (curr->next)
+    ft_putstr("free(");
+    ft_itoa(chunk->size, 10, 0);
+    ft_putstr(")\n");
+
+    if (chunk == NULL)
+        return ;
+
+    if (chunk->size == LARGE)
     {
-        void *h_curr = curr;
-        void *h_next = curr->next;
+        ft_putstr("munmap\n");
+        munmap(chunk, chunk->size + HEADER_SIZE);
+        return ;
+    }
+
+    chunk->is_free = TRUE;
+    while (chunk->next)
+    {
+        void *h_curr = chunk;
+        void *h_next = chunk->next;
     
-        if (curr->is_free == TRUE && curr->next->is_free == TRUE 
-            && h_curr + curr->size + HEADER_SIZE == h_next)
+        if (chunk->is_free == TRUE && chunk->next->is_free == TRUE 
+            && h_curr + chunk->size + HEADER_SIZE == h_next)
         {
-            curr->size += curr->next->size + HEADER_SIZE;
-            curr->next = curr->next->next;
-            if (curr->next) {
-			    curr->next->prev = curr;
+            chunk->size += chunk->next->size + HEADER_SIZE;
+            chunk->next = chunk->next->next;
+            if (chunk->next) {
+			    chunk->next->prev = chunk;
 			}
             else {
                 break ;
             }
         }
-        curr = curr->next;
+        chunk = chunk->next;
     }
 }
 
@@ -102,24 +126,27 @@ void *allocate_new_block(size_t alloc_size)
 }
 
 void *malloc(size_t size)
-{    
+{
+    ft_putstr("malloc(");
+    ft_itoa(size, 10, 0);
+    ft_putstr(")\n");
     size_t      alloc_size = get_allocation_size(size);
     t_zone_type zone_type = get_zone_type(alloc_size);
-    t_mem_chunk *curr = arena[zone_type];
+    t_mem_chunk *chunk = arena[zone_type];
 
     if (size == 0)
         return (NULL);
 
-    while (curr)
+    while (chunk)
     {
-        if (curr->is_free == TRUE && curr->size > size + HEADER_SIZE)
+        if (chunk->is_free == TRUE && chunk->size > size + HEADER_SIZE)
         {
-            if (curr->size == size)
-                return LEFT_OFFSET_HEADER(curr);
-            partitioning(curr, &arena[zone_type], size, alloc_size);
-            return LEFT_OFFSET_HEADER(curr);
+            if (chunk->size == size)
+                return LEFT_OFFSET_HEADER(chunk);
+            partitioning(chunk, &arena[zone_type], size, alloc_size);
+            return LEFT_OFFSET_HEADER(chunk);
         }
-        curr = curr->next;
+        chunk = chunk->next;
     }
     t_mem_chunk *block = allocate_new_block(alloc_size);
     partitioning(block, &arena[zone_type], size, alloc_size);

@@ -1,6 +1,5 @@
 #include <stdlib.h>
-#include <ft_mman.h>
-#include <libft.h>
+#include "malloc.h"
 
 int main(void)
 {
