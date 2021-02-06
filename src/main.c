@@ -31,21 +31,15 @@ static void test_malloc_limits()
 }
 
 int main()
-{
-    
-    for (int i = 0; i < 1024; i++)
+{    
+    char *addr = malloc(16);
+
+    while (1)
     {
-        char *addr = malloc(1024);
-        char *a = realloc(addr, 1024 * 5);
-        // show_alloc_mem();
-        // free(addr);
+        void *m = malloc(1024 * 1024);
+        ft_memset(m, 0, 1024 * 1024);
     }
-
-    // char *addr = malloc(16);
-	// free((void *)addr + 5);
-
-
-    show_alloc_mem();
+    return 0;
     // test_malloc_limits();
     // show_alloc_mem();
 }

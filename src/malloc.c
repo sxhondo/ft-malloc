@@ -20,6 +20,16 @@ t_zone_type get_zone_type(size_t alloc_size)
         return LARGE;
 }
 
+t_zone_type get_zone_type_from_block(size_t block_size)
+
+{
+    if (block_size <= TINY_ZONE_CHUNK)
+        return TINY;
+    else if (block_size <= SMALL_ZONE_CHUNK)
+        return SMALL;
+    else
+        return LARGE;
+}
 t_mem_chunk *select_chunk(t_mem_chunk *chunk)
 {
     int i = 0;
@@ -45,9 +55,9 @@ void *realloc(void *ptr, size_t size)
     if (chunk == NULL)
         return NULL;
 
-    ft_putstr("realloc(");
-    ft_itoa(chunk->size, 10, 0);
-    ft_putstr(")\n");
+    // ft_putstr("realloc(");
+    // ft_itoa(chunk->size, 10, 0);
+    // ft_putstr(")\n");
 
     if (!ptr)
         return malloc(size);
@@ -65,16 +75,21 @@ void free(void *ptr)
 
     t_mem_chunk *chunk = select_chunk(RIGHT_OFFSET_HEADER(ptr));
 
-    ft_putstr("free(");
-    ft_itoa(chunk->size, 10, 0);
-    ft_putstr(")\n");
+    // ft_putstr("free(");
+    // ft_itoa(chunk->size, 10, 0);
+    // ft_putstr(")\n");
 
     if (chunk == NULL)
         return ;
 
-    if (chunk->size == LARGE)
+    chunk->is_free = TRUE;
+    t_zone_type zt = get_zone_type_from_block(chunk->size);
+    if (zt == LARGE)
     {
-        ft_putstr("munmap\n");
+        show_alloc_mem();
+        ft_itoa(chunk->size, 10, 0);
+        ft_putstr(" is large allocation\n");
+        remove_block_from_list(&chunk, zt);
         munmap(chunk, chunk->size + HEADER_SIZE);
         return ;
     }
@@ -121,15 +136,16 @@ void *allocate_new_block(size_t alloc_size)
     if ((block = mmap(NULL, alloc_size, PROT_READ | PROT_WRITE, 
             MAP_PRIVATE | MAP_ANON, -1, 0)) == MAP_FAILED)
         return NULL;
+    ft_memset(block, 'a', block->size);
     block->size = alloc_size - HEADER_SIZE;
     return block;
 }
 
 void *malloc(size_t size)
 {
-    ft_putstr("malloc(");
-    ft_itoa(size, 10, 0);
-    ft_putstr(")\n");
+    // ft_putstr("malloc(");
+    // ft_itoa(size, 10, 0);
+    // ft_putstr(")\n");
     size_t      alloc_size = get_allocation_size(size);
     t_zone_type zone_type = get_zone_type(alloc_size);
     t_mem_chunk *chunk = arena[zone_type];

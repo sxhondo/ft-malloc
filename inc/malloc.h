@@ -52,7 +52,7 @@ void	ft_putstr(char const *s);
 void	ft_itoa(size_t nb, char base, int fd);
 
 void 	add_block_to_list(t_mem_chunk **dst, t_mem_chunk *src);
-void 	remove_block_from_list(t_mem_chunk **rb);
+void 	remove_block_from_list(t_mem_chunk **rb, t_zone_type zt);
 
 void    show_alloc_mem(void);
 

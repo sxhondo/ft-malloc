@@ -24,14 +24,17 @@ void add_block_to_list(t_mem_chunk **dst, t_mem_chunk *src)
     }
 }
 
-void remove_block_from_list(t_mem_chunk **rb)
+void remove_block_from_list(t_mem_chunk **rb, t_zone_type zt)
 {
     if ((*rb)->next)
         (*rb)->next->prev = (*rb)->prev;
     if ((*rb)->prev)
         (*rb)->prev->next = (*rb)->next;
-    (*rb)->next = NULL;
-    (*rb)->prev = NULL;
+    else
+        arena[zt] = (*rb)->next;
     if (!(*rb)->next && !(*rb)->prev)
-        *rb = NULL;
+    {
+        // *rb = NULL;
+        arena[zt] = NULL;
+    }
 }
