@@ -18,13 +18,13 @@ NAME = libft_malloc_$(HOSTTYPE).so
 LIBRARY = libft_malloc.so
 
 CC = gcc
-CC_FLAGS = -g3 # todo
+CC_FLAGS = -g3 # -Wall -Wextra -Werror
 
 INC_DIR = inc/
 SRC_DIR = src/
 OBJ_DIR = obj/
 
-SOURCES = malloc.c libft_utils.c print_utils.c list_utils.c main.c
+SOURCES = malloc.c realloc.c libft_utils.c print_utils.c list_utils.c free.c main.c
 OBJECTS = $(SOURCES:%.c=$(OBJ_DIR)%.o)
 HEADER = $(addprefix $(INC_DIR), malloc.h)
 

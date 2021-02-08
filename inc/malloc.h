@@ -1,18 +1,17 @@
 #ifndef MALLOC_H
 # define MALLOC_H
 
-#include <assert.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/mman.h>
-#include <stdlib.h>
+// #include <stdlib.h>
 #include <sys/resource.h>
 #include <limits.h>
 
 # define HEADER_SIZE (sizeof(t_mem_chunk))
 
-# define LEFT_OFFSET_HEADER(ptr) ((void *)((unsigned long)ptr + HEADER_SIZE))
-# define RIGHT_OFFSET_HEADER(ptr) ((void *)((unsigned long)ptr - HEADER_SIZE))
+# define LEFT_OFFSET_HEADER(ptr) ((void *)ptr + HEADER_SIZE)
+# define RIGHT_OFFSET_HEADER(ptr) ((void *)ptr - HEADER_SIZE)
 
 # define M_MMAP_THRESHOLD (128 * 1024)
 
@@ -51,13 +50,16 @@ void	*ft_memset(void *b, int c, size_t len);
 void	ft_putstr(char const *s);
 void	ft_itoa(size_t nb, char base, int fd);
 
-void 	add_block_to_list(t_mem_chunk **dst, t_mem_chunk *src);
-void 	remove_block_from_list(t_mem_chunk **rb, t_zone_type zt);
+void 		add_block_to_list(t_mem_chunk **dst, t_mem_chunk *src);
+void 		remove_block_from_list(t_mem_chunk **rb, t_zone_type zt);
+t_mem_chunk *select_chunk(t_mem_chunk *chunk);
 
 void    show_alloc_mem(void);
+void 	show_alloc_mem_hex();
 
+
+void 	*malloc(size_t requested_size);
 void 	*realloc(void *ptr, size_t size);
 void 	free(void *ptr);
-void 	*malloc(size_t requested_size);
 
 #endif

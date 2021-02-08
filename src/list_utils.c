@@ -33,8 +33,26 @@ void remove_block_from_list(t_mem_chunk **rb, t_zone_type zt)
     else
         arena[zt] = (*rb)->next;
     if (!(*rb)->next && !(*rb)->prev)
-    {
-        // *rb = NULL;
         arena[zt] = NULL;
+}
+
+t_mem_chunk *select_chunk(t_mem_chunk *chunk)
+{
+    if (!chunk)
+        return NULL;
+
+    int i = 0;
+
+    while (i < 3)
+    {
+        t_mem_chunk *curr = arena[i];
+        while (curr)
+        {
+            if (curr == chunk)
+                return curr;
+            curr = curr->next;
+        }
+        i++;
     }
+    return NULL;
 }

@@ -10,7 +10,5 @@ else
 	export DYLD_FORCE_FLAT_NAMESPACE=1
 fi
 $@
-
-
 # gdb: set environment LD_PRELOAD=./libft_malloc.so
 # lldb: process launch -environment LD_PRELOAD=./libft_malloc.so

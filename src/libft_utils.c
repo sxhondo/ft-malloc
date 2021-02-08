@@ -1,44 +1,32 @@
 #include "malloc.h"
 
-int 	ft_strlen(char *src)
-{
-	int i = 0;
+// void	*ft_memcpy(void *dst, void *src, size_t n)
+// {
+// 	char	*cdst;
+// 	char	*csrc;
 
-	while (src[i] != '\0')
-		i++;
-	return i;
-}
-
-void	*ft_memcpy(void *dst, void *src, size_t n)
-{
-	size_t	i;
-	char	*csrc;
-	char	*cdst;
-
-	i = 0;
-	csrc = (char *)src;
-	cdst = (char *)dst;
-	if (dst == src)
-		return (dst);
-	while (i < n)
-	{
-		cdst[i] = csrc[i];
-		i++;
-	}
-	return (cdst);
-}
+// 	cdst = (char *)dst;
+// 	csrc = (char *)src;
+// 	if (dst == src)
+// 		return (dst);
+// 	while (n--)
+// 		*cdst++ = *csrc++;
+// 	return (dst);
+// }
 
 void	*ft_memset(void *b, int c, size_t len)
 {
-	char	*str;
+	char	*ptr;
+	size_t	i;
 
-	str = (char *)b;
-	while (len > 0)
+	i = 0;
+	ptr = b;
+	while (i < len)
 	{
-		str[len - 1] = c;
-		len--;
+		ptr[i] = c;
+		i++;
 	}
-	return (str);
+	return (b);
 }
 
 void	ft_putstr(char const *s)

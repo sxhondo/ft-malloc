@@ -8,6 +8,9 @@
         "*.tcc": "c",
         "stdlib.h": "c",
         "mcheck.h": "c",
-        "ft_mman.h": "c"
+        "ft_mman.h": "c",
+        "unistd.h": "c",
+        "stdio.h": "c",
+        "assert.h": "c"
     }
 }

@@ -3,43 +3,72 @@
 #include <stdlib.h>
 #include <string.h>
 
-// !!!!!!!!!!!!!!!!
-// TODO SHOULD FILL 3 sizes
-// CHECK To free all, see if the TINY and SMALL stay
-static void test_malloc_limits()
+#define M (1024 * 1024)
+
+void print(char *s)
 {
-    void	*t	= malloc(1);
-    void	*t0	= malloc(TINY_ZONE_CHUNK);
-    void	*t00	= malloc(TINY_ZONE_CHUNK);
-    void	*t000	= malloc(TINY_ZONE_CHUNK);
-    void	*t1	= malloc(SMALL_ZONE_CHUNK);
-    void	*t2	= malloc(SMALL_ZONE_CHUNK + 1);
+    write(1, s, strlen(s));
+}
 
-    // Should print mallocs in all categories (TINY, SMALL, LARGE)
-    show_alloc_mem();
-    free(t);
-    free(t0);
-    show_alloc_mem();
+int test1()
+{
+    char *addr1;
+    char *addr2;
+    char *addr3;
 
-    // t0 = malloc(TINY_BLOCK_SIZE - sizeof(t_block));
-    // // show_alloc_mem();
-    // free(t0);
-    // free(t00);
-    // free(t000);
-    // free(t1);
-    // free(t2);
+    addr1 = (char*)malloc(16*M);
+    strcpy(addr1, "Bonjours\n");
+    print(addr1);
+    addr2 = (char*)malloc(16*M);
+    addr3 = (char*)realloc(addr1, 128*M);
+    addr3[127*M] = 42;
+    print(addr3);
+    return (0);;
 }
 
 int main()
-{    
-    char *addr = malloc(16);
+{
+	test1();
 
-    while (1)
-    {
-        void *m = malloc(1024 * 1024);
-        ft_memset(m, 0, 1024 * 1024);
-    }
-    return 0;
+	// pthread_t *thread = malloc(sizeof(pthread_t) * 100);
+
+	// run_test_malloc();
+	// run_test_realloc();
+	// run_test_mixed();
+
+	// int i = 0;
+	// while (i < 100) {
+	// 	if (pthread_create(thread + i, NULL, run_test_thread, NULL)) {
+	// 		printf("Error pthread");
+	// 		return EXIT_FAILURE;
+	// 	}
+	// 	// if (pthread_join(thread[i], NULL)) {
+	// 	// 	printf("error pthread join");
+	// 	// 	return EXIT_FAILURE;
+	// 	// }
+	// 	i++;
+	// }
+	//
+	// run_test_rlimit(); // Always at the end
+
+	// test_realloc_mix();
+
+
+	// char *ch = realloc(c, 128);
+	// for (int i = 0; i < 128; i++)
+	// {
+	// 	printf("%c ", ch[i]);
+	// }
+    // test_free_1();
+    // test_realloc_mix();
+    // test_realloc_mix_2();
+    // test_show_alloc_mem_ex();
+    // realloc_null_ptr();
+    // realloc_0();
+    // realloc_1();
+    // realloc_large();
     // test_malloc_limits();
     // show_alloc_mem();
+
+    return 0;
 }
