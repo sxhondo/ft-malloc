@@ -1,5 +1,5 @@
 #include <mcheck.h>
-#include "malloc.h"
+// #include "malloc.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -23,7 +23,7 @@ int test1()
     addr3 = (char*)realloc(addr1, 128*M);
     addr3[127*M] = 42;
     print(addr3);
-    return (0);;
+    return (0);
 }
 
 int main()

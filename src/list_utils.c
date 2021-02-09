@@ -38,9 +38,6 @@ void remove_block_from_list(t_mem_chunk **rb, t_zone_type zt)
 
 t_mem_chunk *select_chunk(t_mem_chunk *chunk)
 {
-    if (!chunk)
-        return NULL;
-
     int i = 0;
 
     while (i < 3)

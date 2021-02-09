@@ -20,21 +20,22 @@ void free(void *ptr)
     if (chunk == NULL)
         return ;
 
-    chunk->is_free = TRUE;
-    while (chunk->next)
-    {    
-        if (chunk->is_free == TRUE && chunk->next->is_free == TRUE 
-            && chunk + chunk->size + HEADER_SIZE == chunk->next)
-        {
-            chunk->size += chunk->next->size + HEADER_SIZE;
-            chunk->next = chunk->next->next;
-            if (chunk->next)
-			    chunk->next->prev = chunk;
-            else
-                break ;
-        }
-        chunk = chunk->next;
-    }
+    // t_mem_chunk *curr = chunk;
+    // curr->is_free = TRUE;
+    // while (curr->next)
+    // {    
+    //     if (curr->is_free == TRUE && curr->next->is_free == TRUE 
+    //         && curr + curr->size + HEADER_SIZE == curr->next)
+    //     {
+    //         curr->size += curr->next->size + HEADER_SIZE;
+    //         curr->next = curr->next->next;
+    //         if (curr->next)
+	// 		    curr->next->prev = curr;
+    //         else
+    //             break ;
+    //     }
+    //     curr = curr->next;
+    // }
 
     t_zone_type zt = get_zone_type_from_block(chunk->size);
     if (zt == LARGE)
@@ -42,10 +43,9 @@ void free(void *ptr)
         t_mem_chunk *curr = arena[zt];
         while (curr)
         {
-            if (curr->next == NULL && curr->is_free == TRUE)
+            if (curr->next == NULL)
             {
-                remove_block_from_list(&curr, zt);
-                munmap(curr, curr->size + HEADER_SIZE);
+
                 return ;
             }    
             curr = curr->next;

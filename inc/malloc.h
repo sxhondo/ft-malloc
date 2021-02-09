@@ -15,7 +15,7 @@
 
 # define M_MMAP_THRESHOLD (128 * 1024)
 
-# define TINY_ZONE_SIZE (4 * getpagesize())
+# define TINY_ZONE_SIZE (8 * getpagesize())
 # define TINY_ZONE_CHUNK ((size_t)(TINY_ZONE_SIZE / 128))
 
 # define SMALL_ZONE_SIZE (32 * getpagesize())

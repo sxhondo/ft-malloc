@@ -25,17 +25,17 @@ void partitioning(t_mem_chunk *raw, t_mem_chunk **dst, size_t size, size_t alloc
     if (alloc_size > size + HEADER_SIZE)
     {
         t_mem_chunk *free_space = LEFT_OFFSET_HEADER(raw) + size;
-        free_space->size = raw->size - (size + HEADER_SIZE);
+        // free_space->size = raw->size - (size + HEADER_SIZE);
         free_space->is_free = TRUE;
         add_block_to_list(dst, free_space);
     }
-    raw->is_free = FALSE;
-    raw->size = size;
+    // raw->is_free = FALSE;
+    // raw->size = size;
 }
 
 void *malloc(size_t size)
 {
-    size = (size + 15) & ~15;
+    // size = (size + 15) & ~15;
     size_t          alloc_size = get_allocation_size(size);
     t_zone_type     zone_type = get_zone_type(alloc_size);
     t_mem_chunk     *chunk = arena[zone_type];
@@ -63,7 +63,9 @@ void *malloc(size_t size)
         return NULL;
 
     block->size = alloc_size - HEADER_SIZE;
-    partitioning(block, &arena[zone_type], size, alloc_size);
+    partitioning(block, &arena[zone_type], block->size, alloc_size);
     add_block_to_list(&arena[zone_type], block);
+    // ft_memset(block + HEADER_SIZE, '\0', block->size);
+    
     return LEFT_OFFSET_HEADER(block);
 }
