@@ -9,13 +9,13 @@ void    show_alloc_mem()
     {
         if (i == 0)
         {
-            ft_putstr("TINY : \t" );
-            // continue ;
+            // ft_putstr("TINY : \t" );
+            continue ;
         }
         if (i == 1)
         {
-            ft_putstr("SMALL :\t");
-            // continue ;
+            // ft_putstr("SMALL :\t");
+            continue ;
         }
         if (i == 2)
             ft_putstr("LARGE :\t");

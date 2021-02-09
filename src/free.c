@@ -12,16 +12,21 @@ t_zone_type get_zone_type_from_block(size_t block_size)
 
 void free(void *ptr)
 {
-    if (ptr == NULL)
+    t_zone zone = select_chunk(RIGHT_OFFSET_HEADER(ptr));
+    t_mem_chunk *chunk = zone.ptr;
+    t_zone_type zone_type = zone.zone_type;
+
+    if (chunk == NULL || ptr == NULL)
         return ;
 
-    t_mem_chunk *chunk = select_chunk(RIGHT_OFFSET_HEADER(ptr));
+    chunk->is_free = TRUE;
+    if (zone_type == LARGE)
+    {
+        // remove_block_from_list(&chunk, zone_type);
+        // munmap(chunk, chunk->size + HEADER_SIZE);
+    }
 
-    if (chunk == NULL)
-        return ;
-
-    // t_mem_chunk *curr = chunk;
-    // curr->is_free = TRUE;
+    // t_mem_chunk *curr = arena[zone_type];
     // while (curr->next)
     // {    
     //     if (curr->is_free == TRUE && curr->next->is_free == TRUE 
@@ -36,19 +41,4 @@ void free(void *ptr)
     //     }
     //     curr = curr->next;
     // }
-
-    t_zone_type zt = get_zone_type_from_block(chunk->size);
-    if (zt == LARGE)
-    {
-        t_mem_chunk *curr = arena[zt];
-        while (curr)
-        {
-            if (curr->next == NULL)
-            {
-
-                return ;
-            }    
-            curr = curr->next;
-        }
-    }
 }

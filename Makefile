@@ -23,8 +23,10 @@ CC_FLAGS = -g3 # -Wall -Wextra -Werror
 INC_DIR = inc/
 SRC_DIR = src/
 OBJ_DIR = obj/
+TEST_DIR = test/
+S_TEST_DIR = $(TEST_DIR)subject_test/
 
-SOURCES = malloc.c realloc.c libft_utils.c print_utils.c list_utils.c free.c main.c
+SOURCES = malloc.c realloc.c libft_utils.c print_utils.c list_utils.c free.c
 OBJECTS = $(SOURCES:%.c=$(OBJ_DIR)%.o)
 HEADER = $(addprefix $(INC_DIR), malloc.h)
 
@@ -36,8 +38,26 @@ $(NAME): $(OBJECTS) $(HEADER) Makefile
 	ln -s $(NAME) $(LIBRARY)
 
 debug: re $(OBJECTS) $(HEADER) Makefile
-	$(CC) $(CC_FLAGS) $(OBJ_DIR)*.o -o $@ -I $(INC_DIR)
-	
+	$(CC) $(CC_FLAGS) $(SRC_DIR)main.c $(OBJ_DIR)*.o -o $@ -I $(INC_DIR)
+
+s_test: re $(OBJECTS) $(HEADER) Makefile
+	$(CC) $(S_TEST_DIR)test0.c -I $(INC_DIR) -o $(S_TEST_DIR)test0 \
+		&& ./run.sh /usr/bin/time -v $(S_TEST_DIR)test0
+	$(CC) $(S_TEST_DIR)test1.c -I $(INC_DIR) -o $(S_TEST_DIR)test1 \
+		&& ./run.sh /usr/bin/time -v $(S_TEST_DIR)test1
+	$(CC) $(S_TEST_DIR)test2.c -I $(INC_DIR) -o $(S_TEST_DIR)test2 \
+		&& ./run.sh /usr/bin/time -v $(S_TEST_DIR)test2
+	$(CC) $(S_TEST_DIR)test3-1.c -I $(INC_DIR) -o $(S_TEST_DIR)test3-1 \
+		&& ./run.sh $(S_TEST_DIR)test3-1
+	$(CC) $(S_TEST_DIR)test3-2.c -I $(INC_DIR) -o $(S_TEST_DIR)test3-2 \
+		&& ./run.sh $(S_TEST_DIR)test3-2
+	$(CC) $(S_TEST_DIR)test4.c -I $(INC_DIR) -o $(S_TEST_DIR)test4 \
+		&& ./run.sh $(S_TEST_DIR)test4
+
+c_test: re $(OBJECTS) $(HEADER) Makefile
+	$(CC) $(TEST_DIR)custom_test.c -I $(INC_DIR) -o $(TEST_DIR)custom_test \
+		&& ./run.sh $(TEST_DIR)custom_test
+
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	@mkdir -p $(@D)
 	$(CC) $(CC_FLAGS) -fPIC -c -o $@ $(CC_FLAGS) $^ -I $(INC_DIR)
@@ -50,4 +70,4 @@ fclean: clean
 
 re: fclean $(NAME)
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re s_test c_test

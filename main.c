@@ -41,6 +41,13 @@ int test2()
 
 int main()
 {
-   test1();
-   test2();
+    char *ch = malloc(4096);
+    strcpy(ch, "hell\n");
+
+    void *v = realloc(ch + 1, 128);
+
+    if (v == NULL)
+        print("v is null\n");
+    else
+        print("v is not null\n"); 
 }

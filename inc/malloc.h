@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/mman.h>
-// #include <stdlib.h>
 #include <sys/resource.h>
 #include <limits.h>
 
@@ -15,7 +14,7 @@
 
 # define M_MMAP_THRESHOLD (128 * 1024)
 
-# define TINY_ZONE_SIZE (8 * getpagesize())
+# define TINY_ZONE_SIZE (4 * getpagesize())
 # define TINY_ZONE_CHUNK ((size_t)(TINY_ZONE_SIZE / 128))
 
 # define SMALL_ZONE_SIZE (32 * getpagesize())
@@ -42,24 +41,30 @@ typedef struct			s_mem_chunk
 	struct s_mem_chunk 	*prev;
 }                   	t_mem_chunk;
 
+typedef struct 			s_zone
+{
+	t_zone_type			zone_type;
+	struct s_mem_chunk 	*ptr;
+}						t_zone;
+
 t_mem_chunk				*arena[3];
 
-int 	ft_strlen(char *src);
-void 	*ft_memcpy(void *dst, void *src, size_t n);
-void	*ft_memset(void *b, int c, size_t len);
-void	ft_putstr(char const *s);
-void	ft_itoa(size_t nb, char base, int fd);
+int 		ft_strlen(char *src);
+void 		*ft_memcpy(void *dst, void *src, size_t n);
+void		*ft_memset(void *b, int c, size_t len);
+void		ft_putstr(char const *s);
+void		ft_itoa(size_t nb, char base, int fd);
 
 void 		add_block_to_list(t_mem_chunk **dst, t_mem_chunk *src);
 void 		remove_block_from_list(t_mem_chunk **rb, t_zone_type zt);
-t_mem_chunk *select_chunk(t_mem_chunk *chunk);
+t_zone 		select_chunk(t_mem_chunk *chunk);
 
-void    show_alloc_mem(void);
-void 	show_alloc_mem_hex();
+void    	show_alloc_mem(void);
+void 		show_alloc_mem_hex();
 
 
-void 	*malloc(size_t requested_size);
-void 	*realloc(void *ptr, size_t size);
-void 	free(void *ptr);
+void 		*malloc(size_t requested_size);
+void 		*realloc(void *ptr, size_t size);
+void 		free(void *ptr);
 
 #endif
