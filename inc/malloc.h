@@ -49,11 +49,14 @@ typedef struct 			s_zone
 
 t_mem_chunk				*arena[3];
 
+t_mem_chunk				*head;
+
 int 		ft_strlen(char *src);
 void 		*ft_memcpy(void *dst, void *src, size_t n);
 void		*ft_memset(void *b, int c, size_t len);
 void		ft_putstr(char const *s);
 void		ft_itoa(size_t nb, char base, int fd);
+void		ft_itoa_hex(size_t number, char base, int fd);
 
 void 		add_block_to_list(t_mem_chunk **dst, t_mem_chunk *src);
 void 		remove_block_from_list(t_mem_chunk **rb, t_zone_type zt);
@@ -63,8 +66,10 @@ void    	show_alloc_mem(void);
 void 		show_alloc_mem_hex();
 
 
-void 		*malloc(size_t requested_size);
+void 		*malloc(size_t size);
 void 		*realloc(void *ptr, size_t size);
 void 		free(void *ptr);
+void 		*calloc(size_t nmemb, size_t size);
+void 		*reallocarray(void *ptr, size_t nmemb, size_t size);
 
 #endif

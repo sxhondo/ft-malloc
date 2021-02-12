@@ -45,7 +45,7 @@ t_zone  select_chunk(t_mem_chunk *chunk)
     {
         t_mem_chunk *curr = arena[i];
         while (curr)
-        {
+        {    
             if (curr == chunk)
             {
                 zone.ptr = curr;

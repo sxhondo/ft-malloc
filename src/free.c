@@ -11,34 +11,39 @@ t_zone_type get_zone_type_from_block(size_t block_size)
 }
 
 void free(void *ptr)
-{
+{   
     t_zone zone = select_chunk(RIGHT_OFFSET_HEADER(ptr));
     t_mem_chunk *chunk = zone.ptr;
     t_zone_type zone_type = zone.zone_type;
 
-    if (chunk == NULL || ptr == NULL)
+    if (chunk == NULL)
         return ;
 
     chunk->is_free = TRUE;
-    if (zone_type == LARGE)
+    while (chunk->next)
     {
-        // remove_block_from_list(&chunk, zone_type);
-        // munmap(chunk, chunk->size + HEADER_SIZE);
+        void *h_curr = chunk;
+        void *h_next = chunk->next;
+    
+        if (chunk->is_free == TRUE && chunk->next->is_free == TRUE 
+            && h_curr + chunk->size + HEADER_SIZE == h_next)
+        {
+            chunk->size += chunk->next->size + HEADER_SIZE;
+            chunk->next = chunk->next->next;
+            if (chunk->next) {
+			    chunk->next->prev = chunk;
+			}
+            else {
+                break ;
+            }
+        }
+        chunk = chunk->next;
     }
 
-    // t_mem_chunk *curr = arena[zone_type];
-    // while (curr->next)
-    // {    
-    //     if (curr->is_free == TRUE && curr->next->is_free == TRUE 
-    //         && curr + curr->size + HEADER_SIZE == curr->next)
-    //     {
-    //         curr->size += curr->next->size + HEADER_SIZE;
-    //         curr->next = curr->next->next;
-    //         if (curr->next)
-	// 		    curr->next->prev = curr;
-    //         else
-    //             break ;
-    //     }
-    //     curr = curr->next;
+    //todo:
+    // if (zone_type == LARGE && chunk->next == NULL)
+    // {
+    //     remove_block_from_list(&chunk, zone_type);
+    //     munmap(chunk, chunk->size + HEADER_SIZE);
     // }
 }

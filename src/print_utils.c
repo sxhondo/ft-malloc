@@ -9,8 +9,8 @@ void    show_alloc_mem()
     {
         if (i == 0)
         {
-            // ft_putstr("TINY : \t" );
-            continue ;
+            ft_putstr("TINY : \t" );
+            // continue ;
         }
         if (i == 1)
         {
@@ -18,7 +18,10 @@ void    show_alloc_mem()
             continue ;
         }
         if (i == 2)
-            ft_putstr("LARGE :\t");
+        {
+            // ft_putstr("LARGE :\t");
+            continue ;
+        }
         ft_putstr("\n");
         t_mem_chunk *curr = arena[i];
         while (curr)

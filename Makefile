@@ -24,9 +24,9 @@ INC_DIR = inc/
 SRC_DIR = src/
 OBJ_DIR = obj/
 TEST_DIR = test/
-S_TEST_DIR = $(TEST_DIR)subject_test/
+SUBJ_TEST_DIR = $(TEST_DIR)subject_test/
 
-SOURCES = malloc.c realloc.c libft_utils.c print_utils.c list_utils.c free.c
+SOURCES = malloc.c libft_utils.c print_utils.c list_utils.c free.c realloc.c
 OBJECTS = $(SOURCES:%.c=$(OBJ_DIR)%.o)
 HEADER = $(addprefix $(INC_DIR), malloc.h)
 
@@ -40,19 +40,19 @@ $(NAME): $(OBJECTS) $(HEADER) Makefile
 debug: re $(OBJECTS) $(HEADER) Makefile
 	$(CC) $(CC_FLAGS) $(SRC_DIR)main.c $(OBJ_DIR)*.o -o $@ -I $(INC_DIR)
 
-s_test: re $(OBJECTS) $(HEADER) Makefile
-	$(CC) $(S_TEST_DIR)test0.c -I $(INC_DIR) -o $(S_TEST_DIR)test0 \
-		&& ./run.sh /usr/bin/time -v $(S_TEST_DIR)test0
-	$(CC) $(S_TEST_DIR)test1.c -I $(INC_DIR) -o $(S_TEST_DIR)test1 \
-		&& ./run.sh /usr/bin/time -v $(S_TEST_DIR)test1
-	$(CC) $(S_TEST_DIR)test2.c -I $(INC_DIR) -o $(S_TEST_DIR)test2 \
-		&& ./run.sh /usr/bin/time -v $(S_TEST_DIR)test2
-	$(CC) $(S_TEST_DIR)test3-1.c -I $(INC_DIR) -o $(S_TEST_DIR)test3-1 \
-		&& ./run.sh $(S_TEST_DIR)test3-1
-	$(CC) $(S_TEST_DIR)test3-2.c -I $(INC_DIR) -o $(S_TEST_DIR)test3-2 \
-		&& ./run.sh $(S_TEST_DIR)test3-2
-	$(CC) $(S_TEST_DIR)test4.c -I $(INC_DIR) -o $(S_TEST_DIR)test4 \
-		&& ./run.sh $(S_TEST_DIR)test4
+s_test: re $(SUBJ_TEST_OBJ)
+	$(CC) $(SUBJ_TEST_DIR)test0.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test0 \
+		&& ./run.sh /usr/bin/time -v $(SUBJ_TEST_DIR)test0
+	$(CC) $(SUBJ_TEST_DIR)test1.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test1 \
+		&& ./run.sh /usr/bin/time -v $(SUBJ_TEST_DIR)test1
+	$(CC) $(SUBJ_TEST_DIR)test2.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test2 \
+		&& ./run.sh /usr/bin/time -v $(SUBJ_TEST_DIR)test2
+	$(CC) $(SUBJ_TEST_DIR)test3-1.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test3-1 \
+		&& ./run.sh $(SUBJ_TEST_DIR)test3-1
+	$(CC) $(SUBJ_TEST_DIR)test3-2.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test3-2 \
+		&& ./run.sh $(SUBJ_TEST_DIR)test3-2
+	$(CC) $(SUBJ_TEST_DIR)test4.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test4 \
+		&& ./run.sh $(SUBJ_TEST_DIR)test4
 
 c_test: re $(OBJECTS) $(HEADER) Makefile
 	$(CC) $(TEST_DIR)custom_test.c -I $(INC_DIR) -o $(TEST_DIR)custom_test \
@@ -67,6 +67,7 @@ clean:
 
 fclean: clean
 	@rm -f $(NAME) $(LIBRARY)
+	@rm -f $(SUBJ_TEST_OBJ)
 
 re: fclean $(NAME)
 

@@ -60,15 +60,6 @@ void realloc_1() {
 	free(t);
 }
 
-void test_free_1(void) {
-	void *test = malloc(10);
-	void *test2 = malloc(10);
-	void *test3 = malloc(10);
-	free(test);
-	free(test2);
-	free(test3);
-}
-
 void test_realloc_mix(void) {
 	void *test = malloc(10);
 	void *test2 = malloc(1);
@@ -125,15 +116,26 @@ void run_test_rlimit()
     free(t);
 }
 
+static void test_free_1(void) {
+	void *test = malloc(10);
+	void *test2 = malloc(10);
+	void *test3 = malloc(10);
+	free(test);
+	free(test2);
+	free(test3);
+}
+
 int main()
 {
-    test_malloc_limits();
-    realloc_null_ptr();
-    realloc_simple();
+    // test_malloc_limits();
+    // realloc_null_ptr();
+    // realloc_simple();
     realloc_1();
-    test_free_1();
-    test_realloc_mix();
-    test_realloc_mix_2();
-    test_show_alloc_mem_ex();
+    // test_free_1();
+    // test_realloc_mix();
+    // test_realloc_mix_2();
+    // test_show_alloc_mem_ex();
 	// run_test_rlimit();
+	// test_free_1();
+
 }
