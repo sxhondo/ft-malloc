@@ -279,18 +279,17 @@ projet:
 <p></p>
 <h4 class="scale-question-name">Tests préliminaires</h4>
 <p class="scale-section-guidelines">
-Vérifiez d'abord les éléments suivants :
+First check the following :
+ - there is indeed a rendering (in the git repository)
+ - valid author file
+ - the Makefile is present and has the requested rules
+ - no fault of norm, the Norminette being authentic
+ - no cheating (unauthorized functions...)
+ - 2 globals are allowed: one to handle allocations, and one to handle thread-safe
 <br>
-<br>- Il y a bien un rendu (dans le dépôt git)
-<br>- Fichier auteur valide
-<br>- Le Makefile est présent et a bien les règles demandées
-<br>- Pas de faute de norme, la Norminette faisant foi
-<br>- Pas de triche (fonctions non autorisées...)
-<br>- 2 globales sont autorisées : une pour gérer les allocations, et une pour gérer le thread-safe
-<br>
-<br>Si un élément n'est pas conforme au sujet, la notation s'arrête la.
-Vous êtes encouragés à continuer de débattre du projet, mais le barème
-n'est pas appliqué.
+<br > if an element does not conform to the subject, the notation stops there.
+You are encouraged to continue to discuss the project, but the scale
+is not applied.
 <br>
 </p>
 <div class="scale-question-answers">
@@ -311,8 +310,8 @@ No
 </div>
 <h4 class="scale-question-name">Compilation de la librairie</h4>
 <p class="scale-section-guidelines">
-Nous allons commencer par vérifier que la compilation de la librairie
-génère bien les fichiers demandés dans le sujet, en modifiant HOSTTYPE:
+We will start by checking that the compilation of the library
+generates well the requested files in the subject, by modifying HOSTTYPE:
 <br>
 <br>$&gt; export HOSTTYPE=Testing
 <br>$&gt; make re
@@ -322,11 +321,11 @@ génère bien les fichiers demandés dans le sujet, en modifiant HOSTTYPE:
 <br>libft_malloc.so -&gt; libft_malloc_Testing.so
 <br>$&gt;
 <br>
-<br>Le Makefile utilise bien HOSTTYPE pour définir le nom de la libraire
- (libft_malloc_$HOSSTYPE.so) et crée bien un lien symbolique
-libft_malloc.so pointant vers libft_malloc_$HOSSTYPE.so ?
-<br>
-<br>Si ce n'est pas le cas, la soutenance s'arrête.
+the Makefile uses HOSTTYPE to define the name of the library
+(libft_malloc_$HOSSTYPE.so) and creates a symbolic link
+libft_malloc.so pointing to libft_malloc_$HOSSTYPE.so ?
+
+if this is not the case, the defense stops.
 <br>
 </p>
 <div class="scale-question-answers">
@@ -347,8 +346,8 @@ No
 </div>
 <h4 class="scale-question-name">Export des fonctions</h4>
 <p class="scale-section-guidelines">
-Vérifiez avec nm que la librairie exporte bien les fonctions malloc, free, realloc et show_alloc_mem.
-<br>
+  Check with nm that the library exports the malloc, free, realloc 
+  and show_alloc_mem functions.
 <br>$&gt; nm libft_malloc.so
 <br>0000000000000000 T _free
 <br>0000000000000000 T _malloc
@@ -361,12 +360,12 @@ Vérifiez avec nm que la librairie exporte bien les fonctions malloc, free, real
 <br>                 U dyld_stub_binder
 <br>$&gt;
 <br>
-<br>Les fonctions exportées par la librairie sont marquées d'un T,
-celles utilisées d'un U (les adresses ont été remplacées par des 0,
-elles changent d'une librairie à l'autre, tout comme l'ordre des
-lignes).
+<br>Functions exported by the library are marked with a T,
+used ones of a U (addresses have been replaced by 0's,
+they change from one bookstore to another, as does the order of the
+line).
 <br>
-<br>Si les fonctions ne sont pas exportées, la soutenance s'arrête.
+<br>If the functions are not exported, the defense stops.
 <br>
 </p>
 <div class="scale-question-answers">

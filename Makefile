@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+         #
+#    By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/03/02 16:26:49 by sxhondo           #+#    #+#              #
-#    Updated: 2020/03/02 16:26:59 by sxhondo          ###   ########.fr        #
+#    Updated: 2021/02/14 15:36:18 by sxhondo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,58 +17,54 @@ endif
 NAME = libft_malloc_$(HOSTTYPE).so
 LIBRARY = libft_malloc.so
 
-CC = gcc
-CC_FLAGS = -g3 # -Wall -Wextra -Werror
+CC = cc
+CC_FLAGS = -pthread -g3 # -Wall -Wextra -Werror
 
 INC_DIR = inc/
 SRC_DIR = src/
 OBJ_DIR = obj/
 TEST_DIR = test/
-SUBJ_TEST_DIR = $(TEST_DIR)subject_test/
+TEST_OBJ_DIR = test/obj/
 
-SOURCES = malloc.c libft_utils.c print_utils.c list_utils.c free.c realloc.c
-OBJECTS = $(SOURCES:%.c=$(OBJ_DIR)%.o)
-HEADER = $(addprefix $(INC_DIR), malloc.h)
+SRC = malloc.c calloc.c free.c realloc.c show_alloc_mem.c struct_utils.c
+OBJ = $(SRC:%.c=$(OBJ_DIR)%.o)
+INC = $(addprefix $(INC_DIR), malloc.h)
+
+TEST_SRC = test0.c test1.c test2.c test3-1.c test3-2.c test4.c custom_test_1.c custom_test_2.c mutex_test.c test5.c
+			
+TEST_OBJ = $(TEST_SRC:%.c=test/obj/%.o)
+TEST_EXE = $(addprefix $(TEST_DIR), $(basename $(TEST_SRC)))
 
 all: $(NAME)
 	
-$(NAME): $(OBJECTS) $(HEADER) Makefile
-	$(CC) -shared $(CC_FLAGS) -o $(NAME) $(OBJECTS) -I $(INC_DIR)
+$(NAME): $(OBJ) $(INC) Makefile
+	$(CC) $(CC_FLAGS) -fPIC -shared -I $(INC_DIR) -o $(NAME) $(OBJ)
 	@rm -f $(LIBRARY)
 	ln -s $(NAME) $(LIBRARY)
 
-debug: re $(OBJECTS) $(HEADER) Makefile
-	$(CC) $(CC_FLAGS) $(SRC_DIR)main.c $(OBJ_DIR)*.o -o $@ -I $(INC_DIR)
-
-s_test: re $(SUBJ_TEST_OBJ)
-	$(CC) $(SUBJ_TEST_DIR)test0.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test0 \
-		&& ./run.sh /usr/bin/time -v $(SUBJ_TEST_DIR)test0
-	$(CC) $(SUBJ_TEST_DIR)test1.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test1 \
-		&& ./run.sh /usr/bin/time -v $(SUBJ_TEST_DIR)test1
-	$(CC) $(SUBJ_TEST_DIR)test2.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test2 \
-		&& ./run.sh /usr/bin/time -v $(SUBJ_TEST_DIR)test2
-	$(CC) $(SUBJ_TEST_DIR)test3-1.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test3-1 \
-		&& ./run.sh $(SUBJ_TEST_DIR)test3-1
-	$(CC) $(SUBJ_TEST_DIR)test3-2.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test3-2 \
-		&& ./run.sh $(SUBJ_TEST_DIR)test3-2
-	$(CC) $(SUBJ_TEST_DIR)test4.c -I $(INC_DIR) -o $(SUBJ_TEST_DIR)test4 \
-		&& ./run.sh $(SUBJ_TEST_DIR)test4
-
-c_test: re $(OBJECTS) $(HEADER) Makefile
-	$(CC) $(TEST_DIR)custom_test.c -I $(INC_DIR) -o $(TEST_DIR)custom_test \
-		&& ./run.sh $(TEST_DIR)custom_test
-
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	@mkdir -p $(@D)
-	$(CC) $(CC_FLAGS) -fPIC -c -o $@ $(CC_FLAGS) $^ -I $(INC_DIR)
+	$(CC) $(CC_FLAGS) -fPIC -I $(INC_DIR) -c $^ -o $@
+
+debug: $(OBJ) $(INC) debug.c Makefile
+	$(CC) $(CC_FLAGS) -I $(INC_DIR) debug.c $(OBJ) -o $@
+
+test: $(NAME) $(TEST_OBJ)
+
+test/obj/%.o: test/%.c
+	@mkdir -p $(TEST_OBJ_DIR)
+	$(CC) $(CC_FLAGS) -I $(INC_DIR) -fpic -c $^ -o $@
+	$(CC) $(CC_FLAGS) -I $(INC_DIR) $@ -o $(basename $^) -L. -lft_malloc
 
 clean:
-	@rm -rf $(OBJ_DIR) debug
+	@rm -rf $(OBJ_DIR)
+	@rm -rf debug 
+	@rm -rf $(TEST_DIR)$(OBJ_DIR)
 
 fclean: clean
 	@rm -f $(NAME) $(LIBRARY)
-	@rm -f $(SUBJ_TEST_OBJ)
+	@rm -f $(TEST_EXE)
 
 re: fclean $(NAME)
 
-.PHONY: all clean fclean re s_test c_test
+.PHONY: all clean fclean re test

@@ -11,6 +11,7 @@
         "ft_mman.h": "c",
         "unistd.h": "c",
         "stdio.h": "c",
-        "assert.h": "c"
+        "assert.h": "c",
+        "cstdlib": "c"
     }
 }

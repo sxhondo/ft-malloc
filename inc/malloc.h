@@ -1,18 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   malloc.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/14 15:37:02 by sxhondo           #+#    #+#             */
+/*   Updated: 2021/02/14 15:37:03 by sxhondo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MALLOC_H
 # define MALLOC_H
 
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/resource.h>
-#include <limits.h>
+# include <unistd.h>
+# include <sys/mman.h>
+# include <sys/resource.h>
+# include <limits.h>
+# include <pthread.h>
 
-# define HEADER_SIZE (sizeof(t_mem_chunk))
+# define HEADER_SIZE (sizeof(t_chunk))
 
-# define LEFT_OFFSET_HEADER(ptr) ((void *)ptr + HEADER_SIZE)
-# define RIGHT_OFFSET_HEADER(ptr) ((void *)ptr - HEADER_SIZE)
-
-# define M_MMAP_THRESHOLD (128 * 1024)
+# define FORWARD_OFFSET_HEADER(ptr) ((void *)ptr + HEADER_SIZE)
+# define BACKWARD_OFFSET_HEADER(ptr) ((void *)ptr - HEADER_SIZE)
 
 # define TINY_ZONE_SIZE (4 * getpagesize())
 # define TINY_ZONE_CHUNK ((size_t)(TINY_ZONE_SIZE / 128))
@@ -20,13 +30,13 @@
 # define SMALL_ZONE_SIZE (32 * getpagesize())
 # define SMALL_ZONE_CHUNK ((size_t)(SMALL_ZONE_SIZE / 128))
 
-typedef enum 			e_boolean
+typedef enum			e_boolean
 {
 	FALSE,
 	TRUE
 }						t_boolean;
 
-typedef enum 			e_zone_type
+typedef enum			e_zone_type
 {
 	TINY,
 	SMALL,
@@ -35,41 +45,47 @@ typedef enum 			e_zone_type
 
 typedef struct			s_mem_chunk
 {
-	size_t          	size;
+	size_t				size;
 	t_boolean			is_free;
-	struct s_mem_chunk 	*next;
-	struct s_mem_chunk 	*prev;
-}                   	t_mem_chunk;
+	struct s_mem_chunk	*next;
+	struct s_mem_chunk	*prev;
+}						t_chunk;
 
-typedef struct 			s_zone
+typedef struct			s_chunk_data
 {
 	t_zone_type			zone_type;
-	struct s_mem_chunk 	*ptr;
-}						t_zone;
+	struct s_mem_chunk	*ptr;
+}						t_chunk_data;
 
-t_mem_chunk				*arena[3];
+typedef struct			s_zone_data
+{
+	size_t				size;
+	size_t				alloc_size;
+	t_zone_type			zone_type;
+}						t_zone_data;
 
-t_mem_chunk				*head;
+/*
+** globals
+*/
+t_chunk					*g_arena[3];
+static pthread_mutex_t	g_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-int 		ft_strlen(char *src);
-void 		*ft_memcpy(void *dst, void *src, size_t n);
-void		*ft_memset(void *b, int c, size_t len);
-void		ft_putstr(char const *s);
-void		ft_itoa(size_t nb, char base, int fd);
-void		ft_itoa_hex(size_t number, char base, int fd);
+/*
+** struct_utils.c
+*/
+void					add_block_to_list(t_chunk **dst, t_chunk *src);
+void					remove_block_from_list(t_chunk **rb, t_zone_type zt);
+t_chunk_data			find_chunk(t_chunk *chunk);
+t_zone_data				retrieve_zone_data(size_t size);
 
-void 		add_block_to_list(t_mem_chunk **dst, t_mem_chunk *src);
-void 		remove_block_from_list(t_mem_chunk **rb, t_zone_type zt);
-t_zone 		select_chunk(t_mem_chunk *chunk);
+/*
+** show_alloc_mem.c
+*/
+void					show_alloc_mem();
 
-void    	show_alloc_mem(void);
-void 		show_alloc_mem_hex();
-
-
-void 		*malloc(size_t size);
-void 		*realloc(void *ptr, size_t size);
-void 		free(void *ptr);
-void 		*calloc(size_t nmemb, size_t size);
-void 		*reallocarray(void *ptr, size_t nmemb, size_t size);
+void					*malloc(size_t size);
+void					*realloc(void *ptr, size_t size);
+void					*calloc(size_t nmemb, size_t size);
+void					free(void *ptr);
 
 #endif

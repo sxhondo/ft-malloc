@@ -1,86 +1,89 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   malloc.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/14 15:36:49 by sxhondo           #+#    #+#             */
+/*   Updated: 2021/02/14 15:36:50 by sxhondo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "malloc.h"
 
-size_t get_allocation_size(size_t size)
+static void			partitioning(t_chunk *raw, t_zone_data zd)
 {
-    if (size <= TINY_ZONE_CHUNK)
-        return TINY_ZONE_SIZE;        
-    else if (size <= SMALL_ZONE_CHUNK)
-        return SMALL_ZONE_SIZE;
-    else
-        return size + HEADER_SIZE;
+	t_chunk		*free_space;
+
+	free_space = FORWARD_OFFSET_HEADER(raw) + zd.size;
+	free_space->size = raw->size - (zd.size + HEADER_SIZE);
+	free_space->is_free = TRUE;
+	raw->is_free = FALSE;
+	raw->size = zd.size;
+	add_block_to_list(&g_arena[zd.zone_type], free_space);
 }
 
-t_zone_type get_zone_type(size_t alloc_size)
+static void			*find_free_chunk(t_chunk *chunk, t_zone_data zd)
 {
-    if (alloc_size == TINY_ZONE_SIZE)
-        return TINY;
-    else if (alloc_size == SMALL_ZONE_SIZE)
-        return SMALL;
-    else
-        return LARGE;
+	while (chunk)
+	{
+		if (chunk->is_free == TRUE && chunk->size > zd.size + HEADER_SIZE)
+		{
+			if (chunk->size == zd.size)
+			{
+				chunk->is_free = FALSE;
+				return (FORWARD_OFFSET_HEADER(chunk));
+			}
+			else
+			{
+				partitioning(chunk, zd);
+				return (FORWARD_OFFSET_HEADER(chunk));
+			}
+		}
+		chunk = chunk->next;
+	}
+	return (NULL);
 }
 
-void *calloc(size_t nmemb, size_t size)
+static void			*allocate_new_chunk(t_zone_data zd)
 {
-    void *new_mem = malloc(nmemb * size);
-    if (new_mem == NULL)
-        return NULL;
-    ft_memset(new_mem, '\0', nmemb * size);
-    return new_mem;
+	t_chunk		*raw;
+
+	raw = (t_chunk *)mmap(NULL, zd.alloc_size,
+				PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+	if (raw == MAP_FAILED)
+		return (NULL);
+	raw->size = zd.alloc_size - HEADER_SIZE;
+	if (zd.alloc_size > zd.size + HEADER_SIZE)
+		partitioning(raw, zd);
+	add_block_to_list(&g_arena[zd.zone_type], raw);
+	return (FORWARD_OFFSET_HEADER(raw));
 }
 
-t_mem_chunk *partitioning(t_mem_chunk *raw, t_mem_chunk **dst, size_t alloc_size, size_t size)
+static int			check_sys_limit(t_zone_data zd)
 {
-    t_mem_chunk *free_space = LEFT_OFFSET_HEADER(raw) + size;
-    free_space->size = raw->size - (size + HEADER_SIZE);
-    free_space->is_free = TRUE;
-    add_block_to_list(dst, free_space);
-    
-    raw->is_free = FALSE;
-    raw->size = size;
-    return LEFT_OFFSET_HEADER(raw);
+	struct rlimit	rlp;
+
+	getrlimit(RLIMIT_DATA, &rlp);
+	if (zd.size >= rlp.rlim_cur)
+		return (1);
+	return (0);
 }
 
-void *malloc(size_t size)
+void				*malloc(size_t size)
 {
-    size_t          alloc_size = get_allocation_size(size);
-    t_zone_type     zone_type = get_zone_type(alloc_size);
-    t_mem_chunk     *chunk = arena[zone_type];
+	t_zone_data		zd;
+	t_chunk			*chunk;
+	void			*mem;
 
-    // struct rlimit   rlp;
-    // getrlimit(RLIMIT_DATA, &rlp);
-    // if (alloc_size > rlp.rlim_cur)
-    //     return (NULL);
-    
-    while (chunk)
-    {
-        if (chunk->is_free == TRUE && chunk->size > size + HEADER_SIZE)
-        {
-            if (chunk->size == size)
-            {
-                chunk->is_free = FALSE;
-                return LEFT_OFFSET_HEADER(chunk);
-            }
-            else 
-            {
-                partitioning(chunk, &arena[zone_type], alloc_size, size);
-                return LEFT_OFFSET_HEADER(chunk);
-            }
-        }
-        chunk = chunk->next;
-    }
-    
-    t_mem_chunk *raw = (t_mem_chunk *)mmap(NULL, 
-            alloc_size, 
-            PROT_READ | PROT_WRITE, 
-            MAP_PRIVATE | MAP_ANON, -1, 0);
-    
-    if (raw == MAP_FAILED)
-        return NULL;
-
-    raw->size = alloc_size - HEADER_SIZE;
-    if (alloc_size > size + HEADER_SIZE)
-        partitioning(raw, &arena[zone_type], alloc_size, size);    
-    add_block_to_list(&arena[zone_type], raw);
-    return LEFT_OFFSET_HEADER(raw);
+	pthread_mutex_lock(&g_mutex);
+	zd = retrieve_zone_data(size);
+	chunk = g_arena[zd.zone_type];
+	if (check_sys_limit(zd))
+		mem = NULL;
+	else if (!(mem = find_free_chunk(chunk, zd)))
+		mem = allocate_new_chunk(zd);
+	pthread_mutex_unlock(&g_mutex);
+	return (mem);
 }
