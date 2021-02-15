@@ -17,8 +17,13 @@ endif
 NAME = libft_malloc_$(HOSTTYPE).so
 LIBRARY = libft_malloc.so
 
-CC = cc
-CC_FLAGS = -pthread -g3 # -Wall -Wextra -Werror
+CC = gcc
+CCFLAGS = -g3 # -Wall -Wextra -Werror
+LIBFLAGS =
+
+ifeq ($(UNAME_S),Linux)
+    CCFLAGS += -pthread
+endif
 
 INC_DIR = inc/
 SRC_DIR = src/
@@ -30,31 +35,37 @@ SRC = malloc.c calloc.c free.c realloc.c show_alloc_mem.c struct_utils.c
 OBJ = $(SRC:%.c=$(OBJ_DIR)%.o)
 INC = $(addprefix $(INC_DIR), malloc.h)
 
-TEST_SRC = test0.c test1.c test2.c test3-1.c test3-2.c test4.c custom_test_1.c custom_test_2.c mutex_test.c test5.c
-			
+TEST_SRC = test0.c test1.c test2.c test3-1.c test3-2.c test4.c
 TEST_OBJ = $(TEST_SRC:%.c=test/obj/%.o)
 TEST_EXE = $(addprefix $(TEST_DIR), $(basename $(TEST_SRC)))
+
+CTEST_SRC = test5.c custom_test_1.c custom_test_2.c custom_mutex_test.c
+CTEST_OBJ = $(CTEST_SRC:%.c=test/obj/%.o)
+CTEST_EXE = $(addprefix $(TEST_DIR), $(basename $(CTEST_SRC)))
 
 all: $(NAME)
 	
 $(NAME): $(OBJ) $(INC) Makefile
-	$(CC) $(CC_FLAGS) -fPIC -shared -I $(INC_DIR) -o $(NAME) $(OBJ)
+	$(CC) $(CCFLAGS) -fPIC -shared -I $(INC_DIR) -o $(NAME) $(OBJ)
 	@rm -f $(LIBRARY)
 	ln -s $(NAME) $(LIBRARY)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	@mkdir -p $(@D)
-	$(CC) $(CC_FLAGS) -fPIC -I $(INC_DIR) -c $^ -o $@
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CCFLAGS) -fPIC -I $(INC_DIR) -c $^ -o $@
 
 debug: $(OBJ) $(INC) debug.c Makefile
-	$(CC) $(CC_FLAGS) -I $(INC_DIR) debug.c $(OBJ) -o $@
+	$(CC) $(CCFLAGS) -I $(INC_DIR) debug.c $(OBJ) -o $@
 
-test: $(NAME) $(TEST_OBJ)
+test: $(NAME) $(TEST_OBJ) $(CTEST_OBJ)
+
+$(CTEST_OBJ): LIBFLAGS := -L. -lft_malloc
+$(CTEST_OBJ): CCFLAGS := -Wno-implicit-function-declaration -Wno-unused-result
 
 test/obj/%.o: test/%.c
 	@mkdir -p $(TEST_OBJ_DIR)
-	$(CC) $(CC_FLAGS) -I $(INC_DIR) -fpic -c $^ -o $@
-	$(CC) $(CC_FLAGS) -I $(INC_DIR) $@ -o $(basename $^) -L. -lft_malloc
+	$(CC) $(CCFLAGS) -fpic -c $^ -o $@ -I $(INC_DIR)
+	$(CC) $@ -o $(basename $^) $(LIBFLAGS)
 
 clean:
 	@rm -rf $(OBJ_DIR)
@@ -64,6 +75,7 @@ clean:
 fclean: clean
 	@rm -f $(NAME) $(LIBRARY)
 	@rm -f $(TEST_EXE)
+	@rm -f $(CTEST_EXE)
 
 re: fclean $(NAME)
 

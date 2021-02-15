@@ -1,5 +1,7 @@
 #include <string.h>
-#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
 #include "malloc.h"
 
 #define NUM_THREADS 100
@@ -11,20 +13,25 @@ void print(char *s)
 
 void *mallocThread() {
 	char *t = malloc(1);
-	t = realloc(t, 1);
-	t = realloc(t, 10);
-	t[0] = 'Z';
-	t[9] = 'Z';
+    free(t);
 
-	t = realloc(t, TINY_ZONE_CHUNK);
-	t = realloc(t, SMALL_ZONE_CHUNK);
-	t = realloc(t, SMALL_ZONE_CHUNK + 2);
-	t = realloc(t, 10);
+	// t = realloc(t, 1);
+	// t = realloc(t, 10);
+	// t[0] = 'Z';
+	// t[9] = 'Z';
 
-    void *v = malloc(4096);
-	free(v);
+	// t = realloc(t, TINY_ZONE_CHUNK);
+	// t = realloc(t, SMALL_ZONE_CHUNK);
+	// t = realloc(t, SMALL_ZONE_CHUNK + 2);
+	// t = realloc(t, 10);
+
+    // void *v = malloc(4096);
+    // void *c = calloc(1024, 3);
+	// free(v);
+    // free(c);
+    // free(t);
     // show_alloc_mem();
-    return t;
+    return NULL;
 }
 
 int main()

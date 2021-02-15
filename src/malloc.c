@@ -66,7 +66,7 @@ static int			check_sys_limit(t_zone_data zd)
 	struct rlimit	rlp;
 
 	getrlimit(RLIMIT_DATA, &rlp);
-	if (zd.size >= rlp.rlim_cur)
+	if (zd.size > rlp.rlim_cur)
 		return (1);
 	return (0);
 }
