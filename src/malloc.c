@@ -6,11 +6,14 @@
 /*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/14 15:36:49 by sxhondo           #+#    #+#             */
-/*   Updated: 2021/02/14 15:36:50 by sxhondo          ###   ########.fr       */
+/*   Updated: 2021/02/15 19:18:24 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
+
+t_malloc			g_malloc;
+pthread_mutex_t		g_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static void			partitioning(t_chunk *raw, t_zone_data zd)
 {
@@ -21,7 +24,7 @@ static void			partitioning(t_chunk *raw, t_zone_data zd)
 	free_space->is_free = TRUE;
 	raw->is_free = FALSE;
 	raw->size = zd.size;
-	add_block_to_list(&g_arena[zd.zone_type], free_space);
+	add_block_to_list(&g_malloc.arena[zd.zone_type], free_space);
 }
 
 static void			*find_free_chunk(t_chunk *chunk, t_zone_data zd)
@@ -57,33 +60,33 @@ static void			*allocate_new_chunk(t_zone_data zd)
 	raw->size = zd.alloc_size - HEADER_SIZE;
 	if (zd.alloc_size > zd.size + HEADER_SIZE)
 		partitioning(raw, zd);
-	add_block_to_list(&g_arena[zd.zone_type], raw);
+	add_block_to_list(&g_malloc.arena[zd.zone_type], raw);
 	return (FORWARD_OFFSET_HEADER(raw));
 }
 
-static int			check_sys_limit(t_zone_data zd)
-{
-	struct rlimit	rlp;
-
-	getrlimit(RLIMIT_DATA, &rlp);
-	if (zd.size > rlp.rlim_cur)
-		return (1);
-	return (0);
-}
-
-void				*malloc(size_t size)
+void				*allocate_memory(size_t size)
 {
 	t_zone_data		zd;
 	t_chunk			*chunk;
 	void			*mem;
+	struct rlimit	rlp;
 
-	pthread_mutex_lock(&g_mutex);
 	zd = retrieve_zone_data(size);
-	chunk = g_arena[zd.zone_type];
-	if (check_sys_limit(zd))
+	chunk = g_malloc.arena[zd.zone_type];
+	getrlimit(RLIMIT_DATA, &rlp);
+	if (zd.size > rlp.rlim_cur)
 		mem = NULL;
 	else if (!(mem = find_free_chunk(chunk, zd)))
 		mem = allocate_new_chunk(zd);
+	return (mem);
+}
+
+void				*malloc(size_t size)
+{
+	void			*mem;
+
+	pthread_mutex_lock(&g_mutex);
+	mem = allocate_memory(size);
 	pthread_mutex_unlock(&g_mutex);
 	return (mem);
 }

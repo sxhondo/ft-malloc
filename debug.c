@@ -1,42 +1,32 @@
-#include <string.h>
-#include <stdio.h>
-#include "malloc.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   debug.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/16 09:13:33 by sxhondo           #+#    #+#             */
+/*   Updated: 2021/02/16 09:14:37 by sxhondo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#define M (1024 * 1024)
+#include <string.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+#include "malloc.h"
+#include <stdio.h>
 
 #define NUM_THREADS 100
+#define M (1024 * 1024)
 
-void print(char *s)
+void	print(char *s)
 {
-    write(1, s, strlen(s));
+	write(1, s, strlen(s));
 }
 
-void run_test_rlimit()
+int		main(int ac, char **av)
 {
-    char *t;
-    struct rlimit rpl;
-
-    rpl.rlim_cur = TINY_ZONE_SIZE;
-    rpl.rlim_max = TINY_ZONE_SIZE;
-
-    if (setrlimit(RLIMIT_DATA, &rpl) < 0)
-        printf("setrlimit did not work\n");
-
-    if (!(t = (char *)malloc(TINY_ZONE_SIZE)))
-        printf("malloc() should return ptr\n");
-    free(t);
-
-    if ((t = (char *)malloc(TINY_ZONE_SIZE)))
-        printf("malloc() should return NULL\n");
-    free(t);
-}
-
-int main()
-{
-    char *addr1;
-    char *addr2;
-    char *addr3;
-
-    run_test_rlimit();
-    return (0);
+	(void *)ac;
+	(void *)av;
 }

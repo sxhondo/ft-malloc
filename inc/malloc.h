@@ -6,7 +6,7 @@
 /*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/14 15:37:02 by sxhondo           #+#    #+#             */
-/*   Updated: 2021/02/14 15:37:03 by sxhondo          ###   ########.fr       */
+/*   Updated: 2021/02/16 09:49:10 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,11 +64,16 @@ typedef struct			s_zone_data
 	t_zone_type			zone_type;
 }						t_zone_data;
 
+typedef struct			s_malloc
+{
+	t_chunk				*arena[3];
+}						t_malloc;
+
 /*
 ** globals
 */
-t_chunk					*g_arena[3];
-static pthread_mutex_t	g_mutex = PTHREAD_MUTEX_INITIALIZER;
+extern	t_malloc		g_malloc;
+extern	pthread_mutex_t	g_mutex;
 
 /*
 ** struct_utils.c
@@ -83,9 +88,25 @@ t_zone_data				retrieve_zone_data(size_t size);
 */
 void					show_alloc_mem();
 
+/*
+** malloc.c
+*/
 void					*malloc(size_t size);
+void					*allocate_memory(size_t size);
+
+/*
+** realloc.c
+*/
 void					*realloc(void *ptr, size_t size);
+/*
+** calloc.c
+*/
 void					*calloc(size_t nmemb, size_t size);
+
+/*
+** free.c
+*/
 void					free(void *ptr);
+void					deallocate_memory(void *ptr);
 
 #endif

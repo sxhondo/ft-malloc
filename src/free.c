@@ -6,11 +6,14 @@
 /*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/14 15:36:43 by sxhondo           #+#    #+#             */
-/*   Updated: 2021/02/14 15:36:43 by sxhondo          ###   ########.fr       */
+/*   Updated: 2021/02/15 19:16:21 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
+
+t_malloc			g_malloc;
+pthread_mutex_t		g_mutex;
 
 static void			merge_contiguous_zones(t_chunk *chunk)
 {
@@ -35,7 +38,7 @@ static void			merge_contiguous_zones(t_chunk *chunk)
 	}
 }
 
-static void			deallocate_memory(void *ptr)
+void				deallocate_memory(void *ptr)
 {
 	t_chunk_data	cd;
 	t_chunk			*chunk;

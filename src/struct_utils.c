@@ -6,11 +6,13 @@
 /*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/14 15:36:57 by sxhondo           #+#    #+#             */
-/*   Updated: 2021/02/14 15:36:58 by sxhondo          ###   ########.fr       */
+/*   Updated: 2021/02/15 19:17:31 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
+
+t_malloc			g_malloc;
 
 t_zone_data			retrieve_zone_data(size_t size)
 {
@@ -68,9 +70,9 @@ void				remove_block_from_list(t_chunk **rb, t_zone_type zt)
 	if ((*rb)->prev)
 		(*rb)->prev->next = (*rb)->next;
 	else
-		g_arena[zt] = (*rb)->next;
+		g_malloc.arena[zt] = (*rb)->next;
 	if (!(*rb)->next && !(*rb)->prev)
-		g_arena[zt] = NULL;
+		g_malloc.arena[zt] = NULL;
 }
 
 t_chunk_data		find_chunk(t_chunk *chunk)
@@ -82,7 +84,7 @@ t_chunk_data		find_chunk(t_chunk *chunk)
 	i = -1;
 	while (++i < 3)
 	{
-		curr = g_arena[i];
+		curr = g_malloc.arena[i];
 		while (curr)
 		{
 			if (curr == chunk)

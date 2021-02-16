@@ -6,11 +6,14 @@
 /*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/14 15:36:55 by sxhondo           #+#    #+#             */
-/*   Updated: 2021/02/14 15:36:55 by sxhondo          ###   ########.fr       */
+/*   Updated: 2021/02/15 19:17:40 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
+
+t_malloc			g_malloc;
+pthread_mutex_t		g_mutex;
 
 static void		ft_print(char const *s)
 {
@@ -88,7 +91,7 @@ void			show_alloc_mem(void)
 			ft_print("SMALL :\n");
 		if (i == LARGE)
 			ft_print("LARGE :\n");
-		print_chunk(g_arena[i]);
+		print_chunk(g_malloc.arena[i]);
 		i++;
 	}
 	ft_print("===\n");
