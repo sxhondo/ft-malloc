@@ -6,7 +6,7 @@
 #    By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/03/02 16:26:49 by sxhondo           #+#    #+#              #
-#    Updated: 2021/02/16 09:49:34 by sxhondo          ###   ########.fr        #
+#    Updated: 2021/02/16 10:41:08 by sxhondo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ TEST_SRC = test0.c test1.c test2.c test3-1.c test3-2.c test4.c
 TEST_OBJ = $(TEST_SRC:%.c=test/obj/%.o)
 TEST_EXE = $(addprefix $(TEST_DIR), $(basename $(TEST_SRC)))
 
-CTEST_SRC = test5.c custom_test_1.c custom_test_2.c custom_mutex_test.c
+CTEST_SRC = test5.c custom_test.c custom_mutex_test.c
 CTEST_OBJ = $(CTEST_SRC:%.c=test/obj/%.o)
 CTEST_EXE = $(addprefix $(TEST_DIR), $(basename $(CTEST_SRC)))
 

@@ -6,7 +6,7 @@
 /*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/14 15:37:02 by sxhondo           #+#    #+#             */
-/*   Updated: 2021/02/16 09:49:10 by sxhondo          ###   ########.fr       */
+/*   Updated: 2021/02/16 10:29:00 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,6 @@
 
 # define FORWARD_OFFSET_HEADER(ptr) ((void *)ptr + HEADER_SIZE)
 # define BACKWARD_OFFSET_HEADER(ptr) ((void *)ptr - HEADER_SIZE)
-
-# define TINY_ZONE_SIZE (4 * getpagesize())
-# define TINY_ZONE_CHUNK ((size_t)(TINY_ZONE_SIZE / 128))
-
-# define SMALL_ZONE_SIZE (32 * getpagesize())
-# define SMALL_ZONE_CHUNK ((size_t)(SMALL_ZONE_SIZE / 128))
 
 typedef enum			e_boolean
 {
