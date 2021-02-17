@@ -6,19 +6,13 @@
 /*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/14 15:36:57 by sxhondo           #+#    #+#             */
-/*   Updated: 2021/02/16 10:34:37 by sxhondo          ###   ########.fr       */
+/*   Updated: 2021/02/17 11:40:24 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
 t_malloc			g_malloc;
-
-#define TINY_ZONE_SIZE (4 * getpagesize())
-#define TINY_ZONE_CHUNK ((size_t)(TINY_ZONE_SIZE / 128))
-
-#define SMALL_ZONE_SIZE (32 * getpagesize())
-#define SMALL_ZONE_CHUNK ((size_t)(SMALL_ZONE_SIZE / 128))
 
 t_zone_data			retrieve_zone_data(size_t size)
 {
@@ -28,13 +22,13 @@ t_zone_data			retrieve_zone_data(size_t size)
 	{
 		zd.size = size;
 		zd.zone_type = TINY;
-		zd.alloc_size = TINY_ZONE_SIZE;
+		zd.alloc_size = TINY_ZONE_MULTIPLIER * getpagesize();
 	}
 	else if (size <= SMALL_ZONE_CHUNK)
 	{
 		zd.size = size;
 		zd.zone_type = SMALL;
-		zd.alloc_size = SMALL_ZONE_SIZE;
+		zd.alloc_size = SMALL_ZONE_MULTIPLIER * getpagesize();
 	}
 	else
 	{

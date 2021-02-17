@@ -6,7 +6,7 @@
 #    By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/03/02 16:26:49 by sxhondo           #+#    #+#              #
-#    Updated: 2021/02/16 19:47:01 by sxhondo          ###   ########.fr        #
+#    Updated: 2021/02/17 11:36:06 by sxhondo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -77,9 +77,10 @@ fclean: clean
 	@rm -rf $(TEST_DIR)
 
 zip:
-	zip -r test.zip $(TEST_DIR)
+	@zip -r test.zip $(TEST_DIR)
+
 unzip:
-	unzip -n test.zip
+	@unzip -n -q test.zip
 
 re: fclean $(NAME)
 

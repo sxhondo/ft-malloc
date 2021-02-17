@@ -6,7 +6,7 @@
 /*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/14 15:37:02 by sxhondo           #+#    #+#             */
-/*   Updated: 2021/02/16 10:29:00 by sxhondo          ###   ########.fr       */
+/*   Updated: 2021/02/17 12:28:14 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,26 @@
 
 # define FORWARD_OFFSET_HEADER(ptr) ((void *)ptr + HEADER_SIZE)
 # define BACKWARD_OFFSET_HEADER(ptr) ((void *)ptr - HEADER_SIZE)
+
+/*
+** For allocations less than 128 we will preallocate
+** TINY_ZONE_MULTIPLIER * getpagesize(), so 16384
+** if page size is equal to 4096.
+** With overhead allocation will be 128 + 32 = 160.
+** 16384 / 160 = 102 allocations per TINY zone.
+*/
+# define TINY_ZONE_CHUNK 128
+# define TINY_ZONE_MULTIPLIER 4
+
+/*
+** For allocations less than 4096 we will preallocate
+** SMALL_ZONE_MULTIPLIER * getpagesize(), so 524288
+** if page size is equal to 4096.
+** With overhead allocation will be 4096 + 32 = 4128
+** 524288 / 4128 = 127 allocation per SMALL zone.
+*/
+# define SMALL_ZONE_CHUNK 4096
+# define SMALL_ZONE_MULTIPLIER 128
 
 typedef enum			e_boolean
 {

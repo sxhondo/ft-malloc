@@ -6,7 +6,7 @@
 /*   By: sxhondo <sxhondo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 09:13:33 by sxhondo           #+#    #+#             */
-/*   Updated: 2021/02/16 16:17:18 by sxhondo          ###   ########.fr       */
+/*   Updated: 2021/02/17 11:55:35 by sxhondo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@
 #include <unistd.h>
 #include "malloc.h"
 #include <stdio.h>
+
+/*
+** gdb: set environment LD_PRELOAD=./libft_malloc.so
+** lldb: process launch -environment LD_PRELOAD=./libft_malloc.so
+*/
 
 #define NUM_THREADS 100
 #define M (1024 * 1024)
